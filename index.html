@@ -104,7 +104,7 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect} = React;
+const {useState, useEffect, useRef} = React;
 
 const STAFF = {
   owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
@@ -187,7 +187,7 @@ function AddTaskForm({user, onCancel}){
   const [deadline,setDeadline]=useState('');
   const [forceUrgent,setForceUrgent]=useState(false);
   const [err,setErr]=useState(false);
-  const dateRef=React.useRef();
+  const dateRef=useRef();
 
   function submit(){
     if(!title.trim()||!deadline){setErr(true);return;}
