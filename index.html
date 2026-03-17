@@ -233,7 +233,8 @@ function TaskCard({fbKey, task, user}){
   const authorColor=authorStaff?.color||'#8A9A86';
   const assignColor=task.assignee==='all'?'#8A9A86':(STAFF[task.assignee]?.color||'#8A9A86');
   const assignLabel=task.assignee==='all'?'All Staff':(STAFF[task.assignee]?.name||task.assignee);
-  const canDel=user.canDelete||(task.createdBy===user.name);
+  const isOwner=Object.keys(STAFF).find(k=>STAFF[k].name===user.name)==='owner';
+  const canDel=isOwner||(task.createdBy===user.name);
   const urgent=task.status!=='completed'&&isUrgent(task.deadline);
   const isToday=task.deadline===today();
 
