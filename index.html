@@ -187,7 +187,6 @@ function AddTaskForm({user, onCancel}){
   const [deadline,setDeadline]=useState('');
   const [forceUrgent,setForceUrgent]=useState(false);
   const [err,setErr]=useState(false);
-  const dateRef=useRef();
 
   function submit(){
     if(!title.trim()||!deadline){setErr(true);return;}
@@ -213,20 +212,12 @@ function AddTaskForm({user, onCancel}){
       <div>
         <div className="form-label">Deadline *</div>
         <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
-          <input type="text" readOnly placeholder="YYYY-MM-DD" value={deadline}
-            style={{flex:1,background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',outline:'none'}}/>
-          <button type="button"
-            onClick={()=>setForceUrgent(u=>!u)}
-            style={{padding:'12px 10px',borderRadius:'8px',border:`2px solid ${forceUrgent?'#E05555':'#3A4A38'}`,background:forceUrgent?'#E05555':'#1E221C',color:forceUrgent?'#fff':'#8A9A86',fontWeight:'700',fontSize:'13px',cursor:'pointer',whiteSpace:'nowrap'}}>
+          <input type="date" value={deadline} min={today()} onChange={e=>setDeadline(e.target.value)}
+            style={{flex:1,background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',outline:'none',colorScheme:'dark'}}/>
+          <button type="button" onClick={()=>setForceUrgent(u=>!u)}
+            style={{padding:'12px 14px',borderRadius:'8px',border:`2px solid ${forceUrgent?'#E05555':'#3A4A38'}`,background:forceUrgent?'#E05555':'#1E221C',color:forceUrgent?'#fff':'#8A9A86',fontWeight:'700',fontSize:'13px',cursor:'pointer',whiteSpace:'nowrap',flexShrink:0}}>
             ⚠ URGENT
           </button>
-          <button type="button" onClick={()=>dateRef.current.showPicker()}
-            style={{padding:'12px',borderRadius:'8px',border:'1px solid #3A4A38',background:'#1E221C',color:'#E8DFC8',fontSize:'18px',cursor:'pointer'}}>
-            📅
-          </button>
-          <input type="date" ref={dateRef} value={deadline} min={today()}
-            onChange={e=>setDeadline(e.target.value)}
-            style={{position:'absolute',opacity:0,pointerEvents:'none',width:0,height:0}}/>
         </div>
       </div>
       <div>
