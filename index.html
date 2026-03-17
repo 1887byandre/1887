@@ -12,7 +12,6 @@
 <script type="module" id="fb-init">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyB9oq1rbAqn0LE12vKiwBcOMwNOAXFktRg",
     authDomain: "mise-en-place-f2865.firebaseapp.com",
@@ -22,7 +21,6 @@
     messagingSenderId: "891593120894",
     appId: "1:891593120894:web:85de306686cde8deb84c2f"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   window._fbDb = db;
@@ -68,18 +66,25 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .section-label{font-size:13px;font-weight:700;color:#6A7A66;text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px}
 .add-form{background:#1E221C;border-radius:12px;padding:14px;border:1px solid #2A3A28;margin-bottom:18px;display:flex;flex-direction:column;gap:10px}
 .add-form input,.add-form textarea,.add-form select{background:#161A13;border:1px solid #2A3A28;color:#E8DFC8;border-radius:8px;padding:12px;font-size:15px;font-family:'Inter',sans-serif;width:100%;outline:none}
+.add-form input[type="date"]{color-scheme:dark}
 .add-form input::placeholder,.add-form textarea::placeholder{color:#4A5A46}
 .add-form textarea{resize:none;height:70px}
 .add-form select option{background:#161A13}
+.form-label{font-size:13px;font-weight:600;color:#8A9A86;margin-bottom:2px}
 .btn-primary{background:#C4A96B;color:#1A1E16;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-primary:active{filter:brightness(.9)}
 .btn-secondary{background:#1E221C;color:#E8DFC8;border:1px solid #2A3A28;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer}
 .task-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid;border-top:1px solid #2A3A28;border-right:1px solid #2A3A28;border-bottom:1px solid #2A3A28}
+.task-card.urgent{border-left-color:#E05555 !important;background:#241A1A}
 .task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .task-title{font-size:16px;font-weight:600;color:#E8DFC8;flex:1}
 .task-del{background:none;border:none;color:#4A5A46;font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
 .task-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px}
+.urgent-badge{background:#E05555;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;animation:pulse 1.5s infinite}
+.deadline-badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;background:#161A13;border:1px solid #3A4A38;color:#8A9A86}
+.deadline-badge.today{color:#E05555;border-color:#E0555544}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 .task-notes{font-size:14px;color:#8A9A86;margin-top:8px;line-height:1.5}
 .status-btns{display:flex;gap:6px;margin-top:10px}
 .status-btn{flex:1;padding:10px 4px;border-radius:8px;border:1px solid #2A3A28;background:#161A13;color:#8A9A86;font-size:13px;font-weight:600;cursor:pointer}
@@ -92,13 +97,12 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .note-del{background:none;border:none;color:#4A5A46;font-size:20px;cursor:pointer;padding:0 4px}
 .empty{text-align:center;color:#4A5A46;font-size:15px;padding:40px 0}
 .syncing{text-align:center;color:#6A7A66;font-size:13px;padding:20px 0}
-.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect, useCallback} = React;
+const {useState, useEffect} = React;
 
 const STAFF = {
   owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
@@ -116,50 +120,51 @@ const ROLES = [
 ];
 
 const STATUS = {
-  pending:      {label:"To Do",       color:"#8A9A86"},
-  "in-progress":{label:"In Progress", color:"#C4A96B"},
-  completed:    {label:"Done ✓",      color:"#8FAF8A"}
+  pending:       {label:"To Do",       color:"#8A9A86"},
+  "in-progress": {label:"In Progress", color:"#C4A96B"},
+  completed:     {label:"Done ✓",      color:"#8FAF8A"}
 };
 
 function ts(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+function today(){return new Date().toISOString().split('T')[0]}
+function isUrgent(deadline){return deadline && deadline <= today()}
+function fmtDate(d){
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
 
-// ── Firebase helpers ──────────────────────────────────────────
-function fbDb(){return window._fbDb}
-function fbRef(path){return window._fbRef(fbDb(), path)}
-function fbPush(path, val){return window._fbPush(fbRef(path), val)}
-function fbUpdate(path, val){return window._fbUpdate(fbRef(path), val)}
+function fbRef(path){return window._fbRef(window._fbDb, path)}
+function fbPush(path,val){return window._fbPush(fbRef(path),val)}
+function fbUpdate(path,val){return window._fbUpdate(fbRef(path),val)}
 function fbRemove(path){return window._fbRemove(fbRef(path))}
-function fbListen(path, cb){return window._fbOnValue(fbRef(path), snap=>cb(snap.val()))}
+function fbListen(path,cb){return window._fbOnValue(fbRef(path),snap=>cb(snap.val()))}
 
 // ── PIN Login ─────────────────────────────────────────────────
 function PinLogin({staff, onSuccess, onBack}){
-  const [pin, setPin] = useState('');
-  const [err, setErr] = useState(false);
-
+  const [pin,setPin]=useState('');
+  const [err,setErr]=useState(false);
   function press(d){
-    if(pin.length >= 4) return;
-    const next = pin + d;
-    setPin(next);
-    setErr(false);
-    if(next.length === 4){
-      if(next === staff.pin) onSuccess();
-      else setTimeout(()=>{setPin(''); setErr(true)}, 300);
+    if(pin.length>=4)return;
+    const next=pin+d; setPin(next); setErr(false);
+    if(next.length===4){
+      if(next===staff.pin)onSuccess();
+      else setTimeout(()=>{setPin('');setErr(true)},300);
     }
   }
-  function del(){setPin(p=>p.slice(0,-1)); setErr(false)}
-
+  function del(){setPin(p=>p.slice(0,-1));setErr(false)}
   return(
     <div className="lgn">
       <button className="btn-secondary" onClick={onBack} style={{alignSelf:'flex-start'}}>← Back</button>
       <div style={{textAlign:'center'}}>
-        <div style={{fontSize:'28px', marginBottom:'8px'}}>{staff.icon}</div>
+        <div style={{fontSize:'28px',marginBottom:'8px'}}>{staff.icon}</div>
         <div className="pin-title" style={{color:staff.color}}>{staff.name}</div>
-        <div style={{fontSize:'14px', color:'#6A7A66', marginTop:'4px'}}>Enter PIN</div>
+        <div style={{fontSize:'14px',color:'#6A7A66',marginTop:'4px'}}>Enter PIN</div>
       </div>
       <div className="pin-dots">
         {[0,1,2,3].map(i=><div key={i} className={`pin-dot${pin.length>i?' filled':''}`}/>)}
       </div>
-      {err && <div className="pin-err">Incorrect PIN. Try again.</div>}
+      {err&&<div className="pin-err">Incorrect PIN. Try again.</div>}
       <div className="pin-pad">
         {[1,2,3,4,5,6,7,8,9].map(n=>(
           <button key={n} className="pin-key" onClick={()=>press(String(n))}>{n}</button>
@@ -174,33 +179,45 @@ function PinLogin({staff, onSuccess, onBack}){
 
 // ── Add Task Form ─────────────────────────────────────────────
 function AddTaskForm({user, onCancel}){
-  const [title, setTitle] = useState('');
-  const [notes, setNotes] = useState('');
-  const [assign, setAssign] = useState('all');
+  const [title,setTitle]=useState('');
+  const [notes,setNotes]=useState('');
+  const [assign,setAssign]=useState('all');
+  const [deadline,setDeadline]=useState('');
+  const [err,setErr]=useState(false);
 
   function submit(){
-    if(!title.trim()) return;
-    fbPush('tasks', {
-      title: title.trim(),
-      notes: notes.trim(),
-      assignee: assign,
-      status: 'pending',
-      createdBy: user.name,
-      createdAt: ts(),
-      createdTs: Date.now()
+    if(!title.trim()||!deadline){setErr(true);return;}
+    fbPush('tasks',{
+      title:title.trim(), notes:notes.trim(), assignee:assign,
+      status:'pending', createdBy:user.name, createdAt:ts(),
+      createdTs:Date.now(), deadline
     });
     onCancel();
   }
 
   return(
     <div className="add-form">
-      <div style={{fontSize:'15px', fontWeight:'700', color:'#E8DFC8'}}>New Task</div>
-      <input placeholder="Task title *" value={title} onChange={e=>setTitle(e.target.value)}/>
-      <textarea placeholder="Notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)}/>
-      <select value={assign} onChange={e=>setAssign(e.target.value)}>
-        {ROLES.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}
-      </select>
-      <div style={{display:'flex', gap:'8px'}}>
+      <div style={{fontSize:'15px',fontWeight:'700',color:'#E8DFC8'}}>New Task</div>
+      <div>
+        <div className="form-label">Task title *</div>
+        <input placeholder="e.g. Polish glassware" value={title} onChange={e=>setTitle(e.target.value)}/>
+      </div>
+      <div>
+        <div className="form-label">Notes (optional)</div>
+        <textarea placeholder="Additional details..." value={notes} onChange={e=>setNotes(e.target.value)}/>
+      </div>
+      <div>
+        <div className="form-label">Deadline *</div>
+        <input type="date" value={deadline} min={today()} onChange={e=>setDeadline(e.target.value)}/>
+      </div>
+      <div>
+        <div className="form-label">Assign to</div>
+        <select value={assign} onChange={e=>setAssign(e.target.value)}>
+          {ROLES.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}
+        </select>
+      </div>
+      {err&&<div style={{color:'#E05555',fontSize:'13px'}}>Please fill in title and deadline.</div>}
+      <div style={{display:'flex',gap:'8px'}}>
         <button className="btn-secondary" style={{flex:1}} onClick={onCancel}>Cancel</button>
         <button className="btn-primary" style={{flex:2}} onClick={submit}>Add Task</button>
       </div>
@@ -210,32 +227,39 @@ function AddTaskForm({user, onCancel}){
 
 // ── Task Card ─────────────────────────────────────────────────
 function TaskCard({fbKey, task, user}){
-  const authorStaff = Object.values(STAFF).find(s=>s.name===task.createdBy);
-  const authorColor = authorStaff?.color || '#8A9A86';
-  const assignColor = task.assignee==='all' ? '#8A9A86' : (STAFF[task.assignee]?.color||'#8A9A86');
-  const assignLabel = task.assignee==='all' ? 'All Staff' : (STAFF[task.assignee]?.name||task.assignee);
-  const canDel = user.canDelete || (task.createdBy === user.name);
+  const authorStaff=Object.values(STAFF).find(s=>s.name===task.createdBy);
+  const authorColor=authorStaff?.color||'#8A9A86';
+  const assignColor=task.assignee==='all'?'#8A9A86':(STAFF[task.assignee]?.color||'#8A9A86');
+  const assignLabel=task.assignee==='all'?'All Staff':(STAFF[task.assignee]?.name||task.assignee);
+  const canDel=user.canDelete||(task.createdBy===user.name);
+  const urgent=task.status!=='completed'&&isUrgent(task.deadline);
+  const isToday=task.deadline===today();
 
-  function setStatus(s){fbUpdate(`tasks/${fbKey}`, {status:s})}
+  function setStatus(s){fbUpdate(`tasks/${fbKey}`,{status:s})}
   function del(){fbRemove(`tasks/${fbKey}`)}
 
   return(
-    <div className="task-card" style={{borderLeftColor:STATUS[task.status].color}}>
+    <div className={`task-card${urgent?' urgent':''}`} style={!urgent?{borderLeftColor:STATUS[task.status].color}:{}}>
       <div className="task-top">
         <div className="task-title">{task.title}</div>
-        {canDel && <button className="task-del" onClick={del}>×</button>}
+        {canDel&&<button className="task-del" onClick={del}>×</button>}
       </div>
-      {task.notes && <div className="task-notes">{task.notes}</div>}
+      {task.notes&&<div className="task-notes">{task.notes}</div>}
       <div className="task-meta">
-        <span className="badge" style={{background:'#161A13', color:assignColor, border:`1px solid ${assignColor}44`}}>→ {assignLabel}</span>
-        <span className="badge" style={{background:'#161A13', color:authorColor, border:`1px solid ${authorColor}44`}}>by {task.createdBy}</span>
-        <span style={{fontSize:'12px', color:'#6A7A66'}}>{task.createdAt}</span>
+        {urgent&&<span className="urgent-badge">⚠ URGENT</span>}
+        {task.deadline&&(
+          <span className={`deadline-badge${isToday?' today':''}`}>
+            📅 {fmtDate(task.deadline)}{isToday?' — Today':''}
+          </span>
+        )}
+        <span className="badge" style={{background:'#161A13',color:assignColor,border:`1px solid ${assignColor}44`}}>→ {assignLabel}</span>
+        <span className="badge" style={{background:'#161A13',color:authorColor,border:`1px solid ${authorColor}44`}}>by {task.createdBy}</span>
       </div>
       <div className="status-btns">
         {Object.entries(STATUS).map(([k,v])=>(
           <button key={k}
             className={`status-btn${task.status===k?' active':''}`}
-            style={{color:task.status===k?v.color:'#6A7A66', borderColor:task.status===k?v.color:'#2A3A28'}}
+            style={{color:task.status===k?v.color:'#6A7A66',borderColor:task.status===k?v.color:'#2A3A28'}}
             onClick={()=>setStatus(k)}>{v.label}</button>
         ))}
       </div>
@@ -245,25 +269,34 @@ function TaskCard({fbKey, task, user}){
 
 // ── Tasks Tab ─────────────────────────────────────────────────
 function TasksTab({user, tasks}){
-  const [showForm, setShowForm] = useState(false);
-  const groups = {pending:[], "in-progress":[], completed:[]};
+  const [showForm,setShowForm]=useState(false);
+  const groups={pending:[],["in-progress"]:[],completed:[]};
   Object.entries(tasks).forEach(([k,t])=>{
-    if(groups[t.status]) groups[t.status].push({fbKey:k, ...t});
+    if(groups[t.status])groups[t.status].push({fbKey:k,...t});
   });
-  // sort newest first
-  Object.values(groups).forEach(g=>g.sort((a,b)=>b.createdTs-a.createdTs));
+  // sort: urgent first, then by deadline, then newest
+  function sortTasks(arr){
+    return arr.sort((a,b)=>{
+      const au=isUrgent(a.deadline)&&a.status!=='completed';
+      const bu=isUrgent(b.deadline)&&b.status!=='completed';
+      if(au&&!bu)return -1;
+      if(!au&&bu)return 1;
+      if(a.deadline&&b.deadline)return a.deadline.localeCompare(b.deadline);
+      return b.createdTs-a.createdTs;
+    });
+  }
 
   return(
     <div className="content">
       {showForm
-        ? <AddTaskForm user={user} onCancel={()=>setShowForm(false)}/>
-        : <button className="btn-primary" style={{marginBottom:'14px'}} onClick={()=>setShowForm(true)}>+ New Task</button>
+        ?<AddTaskForm user={user} onCancel={()=>setShowForm(false)}/>
+        :<button className="btn-primary" style={{marginBottom:'14px'}} onClick={()=>setShowForm(true)}>+ New Task</button>
       }
       {Object.entries(STATUS).map(([sk,sv])=>(
         <div key={sk}>
           <div className="section-label" style={{color:sv.color}}>{sv.label} ({groups[sk].length})</div>
-          {groups[sk].length===0 && <div className="empty">No tasks</div>}
-          {groups[sk].map(t=><TaskCard key={t.fbKey} fbKey={t.fbKey} task={t} user={user}/>)}
+          {groups[sk].length===0&&<div className="empty">No tasks</div>}
+          {sortTasks(groups[sk]).map(t=><TaskCard key={t.fbKey} fbKey={t.fbKey} task={t} user={user}/>)}
         </div>
       ))}
     </div>
@@ -272,43 +305,30 @@ function TasksTab({user, tasks}){
 
 // ── Notes Tab ─────────────────────────────────────────────────
 function NotesTab({user, notes}){
-  const [text, setText] = useState('');
-
+  const [text,setText]=useState('');
   function addNote(){
-    if(!text.trim()) return;
-    const authorColor = Object.values(STAFF).find(s=>s.name===user.name)?.color||'#8A9A86';
-    fbPush('notes', {
-      author: user.name,
-      authorColor,
-      body: text.trim(),
-      time: ts(),
-      createdTs: Date.now()
-    });
+    if(!text.trim())return;
+    const authorColor=Object.values(STAFF).find(s=>s.name===user.name)?.color||'#8A9A86';
+    fbPush('notes',{author:user.name,authorColor,body:text.trim(),time:ts(),createdTs:Date.now()});
     setText('');
   }
-
-  const sorted = Object.entries(notes).sort((a,b)=>b[1].createdTs-a[1].createdTs);
-
+  const sorted=Object.entries(notes).sort((a,b)=>b[1].createdTs-a[1].createdTs);
   return(
     <div className="content">
       <div className="add-form">
-        <div style={{fontSize:'15px', fontWeight:'700', color:'#E8DFC8'}}>Post a Shift Note</div>
-        <textarea
-          placeholder="Write a note for the team..."
-          value={text}
-          onChange={e=>setText(e.target.value)}
-          style={{height:'80px', background:'#161A13', border:'1px solid #2A3A28', color:'#E8DFC8', borderRadius:'8px', padding:'12px', fontSize:'15px', fontFamily:'Inter,sans-serif', width:'100%', outline:'none', resize:'none'}}
-        />
+        <div style={{fontSize:'15px',fontWeight:'700',color:'#E8DFC8'}}>Post a Shift Note</div>
+        <textarea placeholder="Write a note for the team..." value={text} onChange={e=>setText(e.target.value)}
+          style={{height:'80px',background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',width:'100%',outline:'none',resize:'none'}}/>
         <button className="btn-primary" onClick={addNote}>Post Note</button>
       </div>
-      {sorted.length===0 && <div className="empty">No shift notes yet</div>}
+      {sorted.length===0&&<div className="empty">No shift notes yet</div>}
       {sorted.map(([k,n])=>(
         <div key={k} className="note-card">
           <div className="note-header">
             <span className="note-author" style={{color:n.authorColor}}>{n.author}</span>
-            <div style={{display:'flex', gap:'8px', alignItems:'center'}}>
+            <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
               <span className="note-time">{n.time}</span>
-              {(user.canDelete||n.author===user.name) &&
+              {(user.canDelete||n.author===user.name)&&
                 <button className="note-del" onClick={()=>fbRemove(`notes/${k}`)}>×</button>}
             </div>
           </div>
@@ -321,87 +341,78 @@ function NotesTab({user, notes}){
 
 // ── Main App ──────────────────────────────────────────────────
 function App(){
-  const [fbReady, setFbReady] = useState(!!window._fbReady);
-  const [user, setUser]       = useState(null);
-  const [pinFor, setPinFor]   = useState(null);
-  const [tab, setTab]         = useState('tasks');
-  const [tasks, setTasks]     = useState({});
-  const [notes, setNotes]     = useState({});
+  const [fbReady,setFbReady]=useState(!!window._fbReady);
+  const [user,setUser]=useState(null);
+  const [pinFor,setPinFor]=useState(null);
+  const [tab,setTab]=useState('tasks');
+  const [tasks,setTasks]=useState({});
+  const [notes,setNotes]=useState({});
 
-  // Wait for Firebase to load
   useEffect(()=>{
-    if(window._fbReady){setFbReady(true); return}
-    window.addEventListener('fb-ready', ()=>setFbReady(true), {once:true});
+    if(window._fbReady){setFbReady(true);return}
+    window.addEventListener('fb-ready',()=>setFbReady(true),{once:true});
   },[]);
 
-  // Subscribe to Firebase data
   useEffect(()=>{
-    if(!fbReady) return;
-    const unsubT = fbListen('tasks', d=>setTasks(d||{}));
-    const unsubN = fbListen('notes', d=>setNotes(d||{}));
-    return ()=>{unsubT(); unsubN()};
+    if(!fbReady)return;
+    const unsubT=fbListen('tasks',d=>setTasks(d||{}));
+    const unsubN=fbListen('notes',d=>setNotes(d||{}));
+    return()=>{unsubT();unsubN()};
   },[fbReady]);
 
-  if(!fbReady){
-    return <div className="lgn"><div className="syncing">Connecting…</div></div>;
-  }
+  if(!fbReady) return <div className="lgn"><div className="syncing">Connecting…</div></div>;
 
-  if(!user && !pinFor){
-    return(
-      <div className="lgn">
-        <div>
-          <div className="lgn-title">1887 Mise en Place</div>
-          <div className="lgn-sub" style={{marginTop:'8px'}}>Select your role to continue</div>
-        </div>
-        <div className="staff-grid">
-          {Object.entries(STAFF).map(([id,s])=>(
-            <button key={id} className="staff-btn" onClick={()=>setPinFor({id,s})}
-              style={{borderColor:s.bc+'66', color:s.color}}>
-              <span className="staff-icon">{s.icon}</span>
-              <span className="staff-name">{s.name}</span>
-            </button>
-          ))}
-        </div>
+  if(!user&&!pinFor) return(
+    <div className="lgn">
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
+        <img src="logo.png" alt="1887 by André" style={{width:'160px',height:'160px',objectFit:'contain'}}/>
+        <div className="lgn-title">Mise en Place</div>
+        <div className="lgn-sub">Design & Developed by ACG</div>
       </div>
-    );
-  }
+      <div className="staff-grid">
+        {Object.entries(STAFF).map(([id,s])=>(
+          <button key={id} className="staff-btn" onClick={()=>setPinFor({id,s})}
+            style={{borderColor:s.bc+'66',color:s.color}}>
+            <span className="staff-icon">{s.icon}</span>
+            <span className="staff-name">{s.name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
-  if(pinFor && !user){
-    return(
-      <PinLogin
-        staff={pinFor.s}
-        onSuccess={()=>{setUser(pinFor.s); setPinFor(null)}}
-        onBack={()=>setPinFor(null)}
-      />
-    );
-  }
+  if(pinFor&&!user) return(
+    <PinLogin staff={pinFor.s}
+      onSuccess={()=>{setUser(pinFor.s);setPinFor(null)}}
+      onBack={()=>setPinFor(null)}/>
+  );
 
-  const activeTasks = Object.values(tasks).filter(t=>t.status!=='completed').length;
-  const noteCount   = Object.keys(notes).length;
+  const activeTasks=Object.values(tasks).filter(t=>t.status!=='completed').length;
+  const urgentCount=Object.values(tasks).filter(t=>t.status!=='completed'&&isUrgent(t.deadline)).length;
+  const noteCount=Object.keys(notes).length;
 
   return(
     <div className="app">
       <div className="hdr">
         <span className="ht">1887</span>
         <div className="hdr-right">
-          <span className="role-badge" style={{color:user.color, borderColor:user.color+'44'}}>{user.icon} {user.name}</span>
-          <button className="exit-btn" onClick={()=>{setUser(null); setPinFor(null)}}>Exit</button>
+          <span className="role-badge" style={{color:user.color,borderColor:user.color+'44'}}>{user.icon} {user.name}</span>
+          <button className="exit-btn" onClick={()=>{setUser(null);setPinFor(null)}}>Exit</button>
         </div>
       </div>
-
       <div className="tabs">
         <div className={`tab${tab==='tasks'?' active':''}`} onClick={()=>setTab('tasks')}>
-          Tasks{activeTasks>0 && <span style={{background:'#C4A96B', color:'#1A1E16', borderRadius:'10px', padding:'1px 7px', fontSize:'12px', marginLeft:'5px'}}>{activeTasks}</span>}
+          Tasks
+          {urgentCount>0&&<span style={{background:'#E05555',color:'#fff',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'5px'}}>{urgentCount} urgent</span>}
+          {activeTasks>urgentCount&&<span style={{background:'#C4A96B',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{activeTasks-urgentCount}</span>}
         </div>
         <div className={`tab${tab==='notes'?' active':''}`} onClick={()=>setTab('notes')}>
-          Shift Notes{noteCount>0 && <span style={{background:'#8FAF8A', color:'#1A1E16', borderRadius:'10px', padding:'1px 7px', fontSize:'12px', marginLeft:'5px'}}>{noteCount}</span>}
+          Shift Notes{noteCount>0&&<span style={{background:'#8FAF8A',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'5px'}}>{noteCount}</span>}
         </div>
       </div>
-
       {tab==='tasks'
-        ? <TasksTab user={user} tasks={tasks}/>
-        : <NotesTab user={user} notes={notes}/>
-      }
+        ?<TasksTab user={user} tasks={tasks}/>
+        :<NotesTab user={user} notes={notes}/>}
     </div>
   );
 }
