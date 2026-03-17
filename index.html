@@ -72,10 +72,12 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .add-form input::placeholder,.add-form textarea::placeholder{color:#4A5A46}
 .add-form textarea{resize:none;height:70px}
 .add-form select option{background:#161A13}
-.form-label{font-size:13px;font-weight:600;color:#8A9A86;margin-bottom:2px}
+.form-label{font-size:13px;font-weight:600;color:#8A9A86;margin-bottom:4px}
 .btn-primary{background:#C4A96B;color:#1A1E16;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-primary:active{filter:brightness(.9)}
 .btn-secondary{background:#1E221C;color:#E8DFC8;border:1px solid #2A3A28;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer}
+.urgent-toggle-off{padding:12px 14px;border-radius:8px;border:2px solid #3A4A38;background:#1E221C;color:#8A9A86;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
+.urgent-toggle-on{padding:12px 14px;border-radius:8px;border:2px solid #E05555;background:#E05555;color:#fff;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
 .task-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid;border-top:1px solid #2A3A28;border-right:1px solid #2A3A28;border-bottom:1px solid #2A3A28}
 .task-card.urgent{border-left-color:#E05555 !important;background:#2E1A1A;border-top-color:#E0555533 !important;border-right-color:#E0555533 !important;border-bottom-color:#E0555533 !important}
 .task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
@@ -104,7 +106,7 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect, useRef} = React;
+const {useState, useEffect} = React;
 
 const STAFF = {
   owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
@@ -132,23 +134,22 @@ function today(){return new Date().toISOString().split('T')[0]}
 function isUrgent(deadline){return deadline && deadline <= today()}
 function fmtDate(d){
   if(!d) return '';
-  const [y,m,day] = d.split('-');
+  const [y,m,day]=d.split('-');
   return `${day}/${m}/${y}`;
 }
 
-function fbRef(path){return window._fbRef(window._fbDb, path)}
+function fbRef(path){return window._fbRef(window._fbDb,path)}
 function fbPush(path,val){return window._fbPush(fbRef(path),val)}
 function fbUpdate(path,val){return window._fbUpdate(fbRef(path),val)}
 function fbRemove(path){return window._fbRemove(fbRef(path))}
 function fbListen(path,cb){return window._fbOnValue(fbRef(path),snap=>cb(snap.val()))}
 
-// ── PIN Login ─────────────────────────────────────────────────
-function PinLogin({staff, onSuccess, onBack}){
+function PinLogin({staff,onSuccess,onBack}){
   const [pin,setPin]=useState('');
   const [err,setErr]=useState(false);
   function press(d){
     if(pin.length>=4)return;
-    const next=pin+d; setPin(next); setErr(false);
+    const next=pin+d;setPin(next);setErr(false);
     if(next.length===4){
       if(next===staff.pin)onSuccess();
       else setTimeout(()=>{setPin('');setErr(true)},300);
@@ -179,8 +180,7 @@ function PinLogin({staff, onSuccess, onBack}){
   );
 }
 
-// ── Add Task Form ─────────────────────────────────────────────
-function AddTaskForm({user, onCancel}){
+function AddTaskForm({user,onCancel}){
   const [title,setTitle]=useState('');
   const [notes,setNotes]=useState('');
   const [assign,setAssign]=useState('all');
@@ -191,9 +191,9 @@ function AddTaskForm({user, onCancel}){
   function submit(){
     if(!title.trim()||!deadline){setErr(true);return;}
     fbPush('tasks',{
-      title:title.trim(), notes:notes.trim(), assignee:assign,
-      status:'pending', createdBy:user.name, createdAt:ts(),
-      createdTs:Date.now(), deadline, forceUrgent
+      title:title.trim(),notes:notes.trim(),assignee:assign,
+      status:'pending',createdBy:user.name,createdAt:ts(),
+      createdTs:Date.now(),deadline,forceUrgent
     });
     onCancel();
   }
@@ -201,32 +201,39 @@ function AddTaskForm({user, onCancel}){
   return(
     <div className="add-form">
       <div style={{fontSize:'15px',fontWeight:'700',color:'#E8DFC8'}}>New Task</div>
+
       <div>
         <div className="form-label">Task title *</div>
         <input placeholder="e.g. Polish glassware" value={title} onChange={e=>setTitle(e.target.value)}/>
       </div>
+
       <div>
         <div className="form-label">Notes (optional)</div>
         <textarea placeholder="Additional details..." value={notes} onChange={e=>setNotes(e.target.value)}/>
       </div>
+
       <div>
         <div className="form-label">Deadline *</div>
         <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
           <input type="date" value={deadline} min={today()} onChange={e=>setDeadline(e.target.value)}
             style={{flex:1,background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',outline:'none',colorScheme:'dark'}}/>
-          <button type="button" onClick={()=>setForceUrgent(u=>!u)}
-            style={{padding:'12px 14px',borderRadius:'8px',border:`2px solid ${forceUrgent?'#E05555':'#3A4A38'}`,background:forceUrgent?'#E05555':'#1E221C',color:forceUrgent?'#fff':'#8A9A86',fontWeight:'700',fontSize:'13px',cursor:'pointer',whiteSpace:'nowrap',flexShrink:0}}>
+          <button
+            onClick={()=>setForceUrgent(u=>!u)}
+            className={forceUrgent?'urgent-toggle-on':'urgent-toggle-off'}>
             ⚠ URGENT
           </button>
         </div>
       </div>
+
       <div>
         <div className="form-label">Assign to</div>
         <select value={assign} onChange={e=>setAssign(e.target.value)}>
           {ROLES.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}
         </select>
       </div>
+
       {err&&<div style={{color:'#E05555',fontSize:'13px'}}>Please fill in title and deadline.</div>}
+
       <div style={{display:'flex',gap:'8px'}}>
         <button className="btn-secondary" style={{flex:1}} onClick={onCancel}>Cancel</button>
         <button className="btn-primary" style={{flex:2}} onClick={submit}>Add Task</button>
@@ -235,8 +242,7 @@ function AddTaskForm({user, onCancel}){
   );
 }
 
-// ── Task Card ─────────────────────────────────────────────────
-function TaskCard({fbKey, task, user}){
+function TaskCard({fbKey,task,user}){
   const authorStaff=Object.values(STAFF).find(s=>s.name===task.createdBy);
   const authorColor=authorStaff?.color||'#8A9A86';
   const assignColor=task.assignee==='all'?'#8A9A86':(STAFF[task.assignee]?.color||'#8A9A86');
@@ -278,26 +284,26 @@ function TaskCard({fbKey, task, user}){
   );
 }
 
-// ── Tasks Tab ─────────────────────────────────────────────────
-function TasksTab({user, tasks}){
+function TasksTab({user,tasks}){
   const [showForm,setShowForm]=useState(false);
   const groups={pending:[],["in-progress"]:[],completed:[]};
+
   function canSeeTask(t){
-    if(t.assignee==='all') return true;
-    if(user.canDelete) return true; // Owner, GM, Manager see all
-    if(t.createdBy===user.name) return true; // creator always sees it
-    // find which role key matches the current user
+    if(t.assignee==='all')return true;
+    if(user.canDelete)return true;
+    if(t.createdBy===user.name)return true;
     const userKey=Object.keys(STAFF).find(k=>STAFF[k].name===user.name);
     return t.assignee===userKey;
   }
+
   Object.entries(tasks).forEach(([k,t])=>{
     if(canSeeTask(t)&&groups[t.status])groups[t.status].push({fbKey:k,...t});
   });
-  // sort: urgent first, then by deadline, then newest
+
   function sortTasks(arr){
     return arr.sort((a,b)=>{
-      const au=isUrgent(a.deadline)&&a.status!=='completed';
-      const bu=isUrgent(b.deadline)&&b.status!=='completed';
+      const au=(a.forceUrgent||isUrgent(a.deadline))&&a.status!=='completed';
+      const bu=(b.forceUrgent||isUrgent(b.deadline))&&b.status!=='completed';
       if(au&&!bu)return -1;
       if(!au&&bu)return 1;
       if(a.deadline&&b.deadline)return a.deadline.localeCompare(b.deadline);
@@ -322,8 +328,7 @@ function TasksTab({user, tasks}){
   );
 }
 
-// ── Notes Tab ─────────────────────────────────────────────────
-function NotesTab({user, notes}){
+function NotesTab({user,notes}){
   const [text,setText]=useState('');
   function addNote(){
     if(!text.trim())return;
@@ -358,7 +363,6 @@ function NotesTab({user, notes}){
   );
 }
 
-// ── Main App ──────────────────────────────────────────────────
 function App(){
   const [fbReady,setFbReady]=useState(!!window._fbReady);
   const [user,setUser]=useState(null);
@@ -379,9 +383,9 @@ function App(){
     return()=>{unsubT();unsubN()};
   },[fbReady]);
 
-  if(!fbReady) return <div className="lgn"><div className="syncing">Connecting…</div></div>;
+  if(!fbReady)return <div className="lgn"><div className="syncing">Connecting…</div></div>;
 
-  if(!user&&!pinFor) return(
+  if(!user&&!pinFor)return(
     <div className="lgn">
       <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
         <img src="logo.png" alt="1887 by André" style={{width:'160px',height:'160px',objectFit:'contain'}}/>
@@ -400,14 +404,14 @@ function App(){
     </div>
   );
 
-  if(pinFor&&!user) return(
+  if(pinFor&&!user)return(
     <PinLogin staff={pinFor.s}
       onSuccess={()=>{setUser(pinFor.s);setPinFor(null)}}
       onBack={()=>setPinFor(null)}/>
   );
 
+  const urgentCount=Object.values(tasks).filter(t=>t.status!=='completed'&&(t.forceUrgent||isUrgent(t.deadline))).length;
   const activeTasks=Object.values(tasks).filter(t=>t.status!=='completed').length;
-  const urgentCount=Object.values(tasks).filter(t=>t.status!=='completed'&&isUrgent(t.deadline)).length;
   const noteCount=Object.keys(notes).length;
 
   return(
