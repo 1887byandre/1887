@@ -47,7 +47,7 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .lgn{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:24px}
 .lgn-title{font-family:'Playfair Display',serif;font-size:30px;font-style:italic;color:#E8DFC8;text-align:center}
 .lgn-sub{color:#6A7A66;font-size:15px;text-align:center}
-.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:360px}
 .staff-btn{padding:20px 8px;border-radius:12px;border:2px solid;display:flex;flex-direction:column;align-items:center;gap:8px;background:#1E221C;cursor:pointer}
 .staff-btn:active{filter:brightness(1.2)}
 .staff-icon{font-size:26px}
@@ -101,9 +101,13 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 const {useState, useEffect, useCallback} = React;
 
 const STAFF = {
-  owner: {name:"Owner", pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
-  gm:    {name:"General Manager", pin:"1111", color:"#8FAF8A", bc:"#8FAF8A", icon:"◈", canDelete:true},
-  chef:  {name:"Head Chef", pin:"3333", color:"#C4876A", bc:"#C4876A", icon:"◍", canDelete:false}
+  owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
+  gm:        {name:"General Manager", pin:"1111", color:"#8FAF8A", bc:"#8FAF8A", icon:"◈", canDelete:true},
+  manager:   {name:"Manager",         pin:"2222", color:"#A8C4E0", bc:"#A8C4E0", icon:"◆", canDelete:true},
+  chef:      {name:"Head Chef",       pin:"3333", color:"#C4876A", bc:"#C4876A", icon:"◍", canDelete:false},
+  sommelier: {name:"Sommelier",       pin:"4444", color:"#C4A0C4", bc:"#C4A0C4", icon:"◎", canDelete:false},
+  bar:       {name:"Bar Team",        pin:"5555", color:"#7EC8C8", bc:"#7EC8C8", icon:"◐", canDelete:false},
+  service:   {name:"Service",         pin:"6666", color:"#C8C87E", bc:"#C8C87E", icon:"◑", canDelete:false}
 };
 
 const ROLES = [
