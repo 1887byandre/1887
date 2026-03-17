@@ -273,8 +273,16 @@ function TaskCard({fbKey, task, user}){
 function TasksTab({user, tasks}){
   const [showForm,setShowForm]=useState(false);
   const groups={pending:[],["in-progress"]:[],completed:[]};
+  function canSeeTask(t){
+    if(t.assignee==='all') return true;
+    if(user.canDelete) return true; // Owner, GM, Manager see all
+    if(t.createdBy===user.name) return true; // creator always sees it
+    // find which role key matches the current user
+    const userKey=Object.keys(STAFF).find(k=>STAFF[k].name===user.name);
+    return t.assignee===userKey;
+  }
   Object.entries(tasks).forEach(([k,t])=>{
-    if(groups[t.status])groups[t.status].push({fbKey:k,...t});
+    if(canSeeTask(t)&&groups[t.status])groups[t.status].push({fbKey:k,...t});
   });
   // sort: urgent first, then by deadline, then newest
   function sortTasks(arr){
