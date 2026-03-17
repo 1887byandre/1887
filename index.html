@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>1887 Mise en Place</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="module" id="fb-init">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9oq1rbAqn0LE12vKiwBcOMwNOAXFktRg",
+    authDomain: "mise-en-place-f2865.firebaseapp.com",
+    databaseURL: "https://mise-en-place-f2865-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "mise-en-place-f2865",
+    storageBucket: "mise-en-place-f2865.firebasestorage.app",
+    messagingSenderId: "891593120894",
+    appId: "1:891593120894:web:85de306686cde8deb84c2f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window._fbDb = db;
+  window._fbRef = ref;
+  window._fbOnValue = onValue;
+  window._fbPush = push;
+  window._fbUpdate = update;
+  window._fbRemove = remove;
+  window._fbReady = true;
+  window.dispatchEvent(new Event('fb-ready'));
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:hidden;font-size:16px}
+.app{min-height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;border-left:1px solid #2A3A28;border-right:1px solid #2A3A28}
+.hdr{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #2A3A28;background:#161A13;position:sticky;top:0;z-index:10}
+.ht{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:#E8DFC8;font-weight:700}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.role-badge{font-size:13px;padding:4px 10px;border:1px solid;border-radius:6px}
+.exit-btn{background:none;border:1px solid #3A4A38;color:#8A9A86;padding:8px 14px;border-radius:8px;font-size:14px;cursor:pointer}
+.lgn{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:24px}
+.lgn-title{font-family:'Playfair Display',serif;font-size:30px;font-style:italic;color:#E8DFC8;text-align:center}
+.lgn-sub{color:#6A7A66;font-size:15px;text-align:center}
+.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.staff-btn{padding:20px 8px;border-radius:12px;border:2px solid;display:flex;flex-direction:column;align-items:center;gap:8px;background:#1E221C;cursor:pointer}
+.staff-btn:active{filter:brightness(1.2)}
+.staff-icon{font-size:26px}
+.staff-name{font-size:13px;font-weight:600;text-align:center;line-height:1.3}
+.pin-title{font-size:17px;font-weight:600;color:#E8DFC8}
+.pin-dots{display:flex;gap:12px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #4A5A46;background:transparent;transition:background .1s}
+.pin-dot.filled{background:#C4A96B;border-color:#C4A96B}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.pin-key{padding:18px;border-radius:12px;border:1px solid #2A3A28;background:#1E221C;color:#E8DFC8;font-size:20px;font-weight:600;cursor:pointer}
+.pin-key:active{background:#2A3A28}
+.pin-key.del{font-size:16px;color:#8A9A86}
+.pin-err{color:#C4876A;font-size:14px;text-align:center}
+.tabs{display:flex;border-bottom:1px solid #2A3A28;background:#161A13}
+.tab{flex:1;padding:14px 8px;text-align:center;font-size:15px;font-weight:600;color:#6A7A66;cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{color:#E8DFC8;border-bottom-color:#C4A96B}
+.content{flex:1;padding:14px 14px 80px}
+.section-label{font-size:13px;font-weight:700;color:#6A7A66;text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px}
+.add-form{background:#1E221C;border-radius:12px;padding:14px;border:1px solid #2A3A28;margin-bottom:18px;display:flex;flex-direction:column;gap:10px}
+.add-form input,.add-form textarea,.add-form select{background:#161A13;border:1px solid #2A3A28;color:#E8DFC8;border-radius:8px;padding:12px;font-size:15px;font-family:'Inter',sans-serif;width:100%;outline:none}
+.add-form input::placeholder,.add-form textarea::placeholder{color:#4A5A46}
+.add-form textarea{resize:none;height:70px}
+.add-form select option{background:#161A13}
+.btn-primary{background:#C4A96B;color:#1A1E16;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+.btn-primary:active{filter:brightness(.9)}
+.btn-secondary{background:#1E221C;color:#E8DFC8;border:1px solid #2A3A28;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer}
+.task-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid;border-top:1px solid #2A3A28;border-right:1px solid #2A3A28;border-bottom:1px solid #2A3A28}
+.task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.task-title{font-size:16px;font-weight:600;color:#E8DFC8;flex:1}
+.task-del{background:none;border:none;color:#4A5A46;font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.task-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px}
+.task-notes{font-size:14px;color:#8A9A86;margin-top:8px;line-height:1.5}
+.status-btns{display:flex;gap:6px;margin-top:10px}
+.status-btn{flex:1;padding:10px 4px;border-radius:8px;border:1px solid #2A3A28;background:#161A13;color:#8A9A86;font-size:13px;font-weight:600;cursor:pointer}
+.status-btn.active{border-color:currentColor}
+.note-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid #2A3A28}
+.note-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.note-author{font-size:13px;font-weight:700}
+.note-time{font-size:12px;color:#6A7A66}
+.note-body{font-size:15px;color:#D8CEB8;line-height:1.6}
+.note-del{background:none;border:none;color:#4A5A46;font-size:20px;cursor:pointer;padding:0 4px}
+.empty{text-align:center;color:#4A5A46;font-size:15px;padding:40px 0}
+.syncing{text-align:center;color:#6A7A66;font-size:13px;padding:20px 0}
+.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useEffect, useCallback} = React;
+
+const STAFF = {
+  owner: {name:"Owner", pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
+  gm:    {name:"General Manager", pin:"1111", color:"#8FAF8A", bc:"#8FAF8A", icon:"◈", canDelete:true},
+  chef:  {name:"Head Chef", pin:"3333", color:"#C4876A", bc:"#C4876A", icon:"◍", canDelete:false}
+};
+
+const ROLES = [
+  {id:"all", label:"All Staff"},
+  ...Object.entries(STAFF).map(([id,s])=>({id, label:s.name}))
+];
+
+const STATUS = {
+  pending:      {label:"To Do",       color:"#8A9A86"},
+  "in-progress":{label:"In Progress", color:"#C4A96B"},
+  completed:    {label:"Done ✓",      color:"#8FAF8A"}
+};
+
+function ts(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+
+// ── Firebase helpers ──────────────────────────────────────────
+function fbDb(){return window._fbDb}
+function fbRef(path){return window._fbRef(fbDb(), path)}
+function fbPush(path, val){return window._fbPush(fbRef(path), val)}
+function fbUpdate(path, val){return window._fbUpdate(fbRef(path), val)}
+function fbRemove(path){return window._fbRemove(fbRef(path))}
+function fbListen(path, cb){return window._fbOnValue(fbRef(path), snap=>cb(snap.val()))}
+
+// ── PIN Login ─────────────────────────────────────────────────
+function PinLogin({staff, onSuccess, onBack}){
+  const [pin, setPin] = useState('');
+  const [err, setErr] = useState(false);
+
+  function press(d){
+    if(pin.length >= 4) return;
+    const next = pin + d;
+    setPin(next);
+    setErr(false);
+    if(next.length === 4){
+      if(next === staff.pin) onSuccess();
+      else setTimeout(()=>{setPin(''); setErr(true)}, 300);
+    }
+  }
+  function del(){setPin(p=>p.slice(0,-1)); setErr(false)}
+
+  return(
+    <div className="lgn">
+      <button className="btn-secondary" onClick={onBack} style={{alignSelf:'flex-start'}}>← Back</button>
+      <div style={{textAlign:'center'}}>
+        <div style={{fontSize:'28px', marginBottom:'8px'}}>{staff.icon}</div>
+        <div className="pin-title" style={{color:staff.color}}>{staff.name}</div>
+        <div style={{fontSize:'14px', color:'#6A7A66', marginTop:'4px'}}>Enter PIN</div>
+      </div>
+      <div className="pin-dots">
+        {[0,1,2,3].map(i=><div key={i} className={`pin-dot${pin.length>i?' filled':''}`}/>)}
+      </div>
+      {err && <div className="pin-err">Incorrect PIN. Try again.</div>}
+      <div className="pin-pad">
+        {[1,2,3,4,5,6,7,8,9].map(n=>(
+          <button key={n} className="pin-key" onClick={()=>press(String(n))}>{n}</button>
+        ))}
+        <div/>
+        <button className="pin-key" onClick={()=>press('0')}>0</button>
+        <button className="pin-key del" onClick={del}>⌫</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Add Task Form ─────────────────────────────────────────────
+function AddTaskForm({user, onCancel}){
+  const [title, setTitle] = useState('');
+  const [notes, setNotes] = useState('');
+  const [assign, setAssign] = useState('all');
+
+  function submit(){
+    if(!title.trim()) return;
+    fbPush('tasks', {
+      title: title.trim(),
+      notes: notes.trim(),
+      assignee: assign,
+      status: 'pending',
+      createdBy: user.name,
+      createdAt: ts(),
+      createdTs: Date.now()
+    });
+    onCancel();
+  }
+
+  return(
+    <div className="add-form">
+      <div style={{fontSize:'15px', fontWeight:'700', color:'#E8DFC8'}}>New Task</div>
+      <input placeholder="Task title *" value={title} onChange={e=>setTitle(e.target.value)}/>
+      <textarea placeholder="Notes (optional)" value={notes} onChange={e=>setNotes(e.target.value)}/>
+      <select value={assign} onChange={e=>setAssign(e.target.value)}>
+        {ROLES.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}
+      </select>
+      <div style={{display:'flex', gap:'8px'}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={onCancel}>Cancel</button>
+        <button className="btn-primary" style={{flex:2}} onClick={submit}>Add Task</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Task Card ─────────────────────────────────────────────────
+function TaskCard({fbKey, task, user}){
+  const authorStaff = Object.values(STAFF).find(s=>s.name===task.createdBy);
+  const authorColor = authorStaff?.color || '#8A9A86';
+  const assignColor = task.assignee==='all' ? '#8A9A86' : (STAFF[task.assignee]?.color||'#8A9A86');
+  const assignLabel = task.assignee==='all' ? 'All Staff' : (STAFF[task.assignee]?.name||task.assignee);
+  const canDel = user.canDelete || (task.createdBy === user.name);
+
+  function setStatus(s){fbUpdate(`tasks/${fbKey}`, {status:s})}
+  function del(){fbRemove(`tasks/${fbKey}`)}
+
+  return(
+    <div className="task-card" style={{borderLeftColor:STATUS[task.status].color}}>
+      <div className="task-top">
+        <div className="task-title">{task.title}</div>
+        {canDel && <button className="task-del" onClick={del}>×</button>}
+      </div>
+      {task.notes && <div className="task-notes">{task.notes}</div>}
+      <div className="task-meta">
+        <span className="badge" style={{background:'#161A13', color:assignColor, border:`1px solid ${assignColor}44`}}>→ {assignLabel}</span>
+        <span className="badge" style={{background:'#161A13', color:authorColor, border:`1px solid ${authorColor}44`}}>by {task.createdBy}</span>
+        <span style={{fontSize:'12px', color:'#6A7A66'}}>{task.createdAt}</span>
+      </div>
+      <div className="status-btns">
+        {Object.entries(STATUS).map(([k,v])=>(
+          <button key={k}
+            className={`status-btn${task.status===k?' active':''}`}
+            style={{color:task.status===k?v.color:'#6A7A66', borderColor:task.status===k?v.color:'#2A3A28'}}
+            onClick={()=>setStatus(k)}>{v.label}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Tasks Tab ─────────────────────────────────────────────────
+function TasksTab({user, tasks}){
+  const [showForm, setShowForm] = useState(false);
+  const groups = {pending:[], "in-progress":[], completed:[]};
+  Object.entries(tasks).forEach(([k,t])=>{
+    if(groups[t.status]) groups[t.status].push({fbKey:k, ...t});
+  });
+  // sort newest first
+  Object.values(groups).forEach(g=>g.sort((a,b)=>b.createdTs-a.createdTs));
+
+  return(
+    <div className="content">
+      {showForm
+        ? <AddTaskForm user={user} onCancel={()=>setShowForm(false)}/>
+        : <button className="btn-primary" style={{marginBottom:'14px'}} onClick={()=>setShowForm(true)}>+ New Task</button>
+      }
+      {Object.entries(STATUS).map(([sk,sv])=>(
+        <div key={sk}>
+          <div className="section-label" style={{color:sv.color}}>{sv.label} ({groups[sk].length})</div>
+          {groups[sk].length===0 && <div className="empty">No tasks</div>}
+          {groups[sk].map(t=><TaskCard key={t.fbKey} fbKey={t.fbKey} task={t} user={user}/>)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Notes Tab ─────────────────────────────────────────────────
+function NotesTab({user, notes}){
+  const [text, setText] = useState('');
+
+  function addNote(){
+    if(!text.trim()) return;
+    const authorColor = Object.values(STAFF).find(s=>s.name===user.name)?.color||'#8A9A86';
+    fbPush('notes', {
+      author: user.name,
+      authorColor,
+      body: text.trim(),
+      time: ts(),
+      createdTs: Date.now()
+    });
+    setText('');
+  }
+
+  const sorted = Object.entries(notes).sort((a,b)=>b[1].createdTs-a[1].createdTs);
+
+  return(
+    <div className="content">
+      <div className="add-form">
+        <div style={{fontSize:'15px', fontWeight:'700', color:'#E8DFC8'}}>Post a Shift Note</div>
+        <textarea
+          placeholder="Write a note for the team..."
+          value={text}
+          onChange={e=>setText(e.target.value)}
+          style={{height:'80px', background:'#161A13', border:'1px solid #2A3A28', color:'#E8DFC8', borderRadius:'8px', padding:'12px', fontSize:'15px', fontFamily:'Inter,sans-serif', width:'100%', outline:'none', resize:'none'}}
+        />
+        <button className="btn-primary" onClick={addNote}>Post Note</button>
+      </div>
+      {sorted.length===0 && <div className="empty">No shift notes yet</div>}
+      {sorted.map(([k,n])=>(
+        <div key={k} className="note-card">
+          <div className="note-header">
+            <span className="note-author" style={{color:n.authorColor}}>{n.author}</span>
+            <div style={{display:'flex', gap:'8px', alignItems:'center'}}>
+              <span className="note-time">{n.time}</span>
+              {(user.canDelete||n.author===user.name) &&
+                <button className="note-del" onClick={()=>fbRemove(`notes/${k}`)}>×</button>}
+            </div>
+          </div>
+          <div className="note-body">{n.body}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main App ──────────────────────────────────────────────────
+function App(){
+  const [fbReady, setFbReady] = useState(!!window._fbReady);
+  const [user, setUser]       = useState(null);
+  const [pinFor, setPinFor]   = useState(null);
+  const [tab, setTab]         = useState('tasks');
+  const [tasks, setTasks]     = useState({});
+  const [notes, setNotes]     = useState({});
+
+  // Wait for Firebase to load
+  useEffect(()=>{
+    if(window._fbReady){setFbReady(true); return}
+    window.addEventListener('fb-ready', ()=>setFbReady(true), {once:true});
+  },[]);
+
+  // Subscribe to Firebase data
+  useEffect(()=>{
+    if(!fbReady) return;
+    const unsubT = fbListen('tasks', d=>setTasks(d||{}));
+    const unsubN = fbListen('notes', d=>setNotes(d||{}));
+    return ()=>{unsubT(); unsubN()};
+  },[fbReady]);
+
+  if(!fbReady){
+    return <div className="lgn"><div className="syncing">Connecting…</div></div>;
+  }
+
+  if(!user && !pinFor){
+    return(
+      <div className="lgn">
+        <div>
+          <div className="lgn-title">1887 Mise en Place</div>
+          <div className="lgn-sub" style={{marginTop:'8px'}}>Select your role to continue</div>
+        </div>
+        <div className="staff-grid">
+          {Object.entries(STAFF).map(([id,s])=>(
+            <button key={id} className="staff-btn" onClick={()=>setPinFor({id,s})}
+              style={{borderColor:s.bc+'66', color:s.color}}>
+              <span className="staff-icon">{s.icon}</span>
+              <span className="staff-name">{s.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if(pinFor && !user){
+    return(
+      <PinLogin
+        staff={pinFor.s}
+        onSuccess={()=>{setUser(pinFor.s); setPinFor(null)}}
+        onBack={()=>setPinFor(null)}
+      />
+    );
+  }
+
+  const activeTasks = Object.values(tasks).filter(t=>t.status!=='completed').length;
+  const noteCount   = Object.keys(notes).length;
+
+  return(
+    <div className="app">
+      <div className="hdr">
+        <span className="ht">1887</span>
+        <div className="hdr-right">
+          <span className="role-badge" style={{color:user.color, borderColor:user.color+'44'}}>{user.icon} {user.name}</span>
+          <button className="exit-btn" onClick={()=>{setUser(null); setPinFor(null)}}>Exit</button>
+        </div>
+      </div>
+
+      <div className="tabs">
+        <div className={`tab${tab==='tasks'?' active':''}`} onClick={()=>setTab('tasks')}>
+          Tasks{activeTasks>0 && <span style={{background:'#C4A96B', color:'#1A1E16', borderRadius:'10px', padding:'1px 7px', fontSize:'12px', marginLeft:'5px'}}>{activeTasks}</span>}
+        </div>
+        <div className={`tab${tab==='notes'?' active':''}`} onClick={()=>setTab('notes')}>
+          Shift Notes{noteCount>0 && <span style={{background:'#8FAF8A', color:'#1A1E16', borderRadius:'10px', padding:'1px 7px', fontSize:'12px', marginLeft:'5px'}}>{noteCount}</span>}
+        </div>
+      </div>
+
+      {tab==='tasks'
+        ? <TasksTab user={user} tasks={tasks}/>
+        : <NotesTab user={user} notes={notes}/>
+      }
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
