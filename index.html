@@ -553,7 +553,7 @@ function App(){
 
   const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);
   const cutoffStr=cutoff.toISOString().split('T')[0];
-  const recentNotes=Object.values(notes).filter(n=>(n.dateKey||'')>=cutoffStr).length;
+  const recentNotes=Object.values(notes).filter(n=>(n.dateKey||'')>=cutoffStr&&!n.deleted).length;
 
   return(
     <div className="app">
