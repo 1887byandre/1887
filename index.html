@@ -126,6 +126,8 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 <script type="text/babel">
 const {useState,useEffect} = React;
 
+const MASTER_CODE = '1887ACG';
+
 const STAFF = {
   owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑"},
   gm:        {name:"General Manager", pin:"1111", color:"#8FAF8A", bc:"#8FAF8A", icon:"◈"},
@@ -214,6 +216,39 @@ async function authenticateBio(){
   }
   const assertion=await navigator.credentials.get(opts);
   return !!assertion;
+}
+
+// ── Master Code Screen ────────────────────────────────────────
+function MasterLogin({onSuccess}){
+  const [code,setCode]=useState('');
+  const [err,setErr]=useState(false);
+  function submit(){
+    if(code.trim().toUpperCase()===MASTER_CODE){onSuccess();}
+    else{setErr(true);setCode('');}
+  }
+  function handleKey(e){if(e.key==='Enter')submit()}
+  return(
+    <div className="lgn">
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
+        <img src="logo.png" alt="1887 by André" style={{width:'140px',height:'140px',objectFit:'contain'}}/>
+        <div className="lgn-title">Mise en Place</div>
+        <div className="lgn-sub">Design & Developed by ACG</div>
+      </div>
+      <div style={{width:'100%',display:'flex',flexDirection:'column',gap:'10px'}}>
+        <div style={{fontSize:'14px',color:'#8A9A86',textAlign:'center'}}>Enter access code to continue</div>
+        <input
+          type="password"
+          placeholder="Access code"
+          value={code}
+          onChange={e=>{setCode(e.target.value);setErr(false)}}
+          onKeyDown={handleKey}
+          style={{background:'#161A13',border:`1px solid ${err?'#E05555':'#2A3A28'}`,color:'#E8DFC8',borderRadius:'10px',padding:'14px',fontSize:'16px',fontFamily:'Inter,sans-serif',width:'100%',outline:'none',textAlign:'center',letterSpacing:'4px'}}
+        />
+        {err&&<div style={{color:'#E05555',fontSize:'13px',textAlign:'center'}}>Invalid access code. Please contact your vendor.</div>}
+        <button className="btn-primary" onClick={submit}>Continue</button>
+      </div>
+    </div>
+  );
 }
 
 // ── PIN Login ─────────────────────────────────────────────────
@@ -548,6 +583,7 @@ function NotesTab({user,notes}){
 // ── Main App ──────────────────────────────────────────────────
 function App(){
   const [fbReady,setFbReady]=useState(!!window._fbReady);
+  const [masterOk,setMasterOk]=useState(()=>!!localStorage.getItem('1887_master'));
   const [user,setUser]=useState(null);
   const [pinFor,setPinFor]=useState(null);
   const [showBioSetup,setShowBioSetup]=useState(false);
@@ -597,6 +633,8 @@ function App(){
   }
 
   if(!fbReady)return <div className="lgn"><div className="syncing">Connecting…</div></div>;
+
+  if(!masterOk)return<MasterLogin onSuccess={()=>{localStorage.setItem('1887_master','1');setMasterOk(true)}}/>;
 
   // Biometric login screen
   if(showBioLogin&&savedRole&&!user){
