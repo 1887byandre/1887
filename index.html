@@ -434,7 +434,7 @@ function NotesTab({user,notes}){
           </div>
           {n.deleted
             ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
-            :<div className="note-body">{n.body}</div>
+            :<div className="note-body" style={{whiteSpace:'pre-wrap'}}>{n.body}</div>
           }
         </div>
       ))}
@@ -479,7 +479,7 @@ function NotesTab({user,notes}){
                   </div>
                   {n.deleted
                     ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
-                    :<div className="note-body">{n.body}</div>
+                    :<div className="note-body" style={{whiteSpace:'pre-wrap'}}>{n.body}</div>
                   }
                 </div>
               ))}
