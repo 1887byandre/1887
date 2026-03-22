@@ -317,10 +317,10 @@ function TasksTab({user,tasks}){
   const isOwner=uk==='owner';
 
   function canSee(t){
-    if(isOwner)return true;                          // Owner sees all
-    if(t.assignee==='all')return true;               // All staff tasks
-    if(t.createdBy===user.name)return true;          // Created by me
-    return t.assignee===uk;                          // Assigned to me
+    if(isOwner)return true;                          // Only Owner sees all
+    if(t.assignee==='all')return true;               // All staff tasks visible to everyone
+    if(t.createdBy===user.name)return true;          // I created it
+    return t.assignee===uk;                          // Assigned directly to me
   }
 
   const groups={pending:[],["in-progress"]:[],completed:[]};
