@@ -25,12 +25,8 @@
   };
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  window._fbDb = db;
-  window._fbRef = ref;
-  window._fbOnValue = onValue;
-  window._fbPush = push;
-  window._fbUpdate = update;
-  window._fbRemove = remove;
+  window._fbDb = db; window._fbRef = ref; window._fbOnValue = onValue;
+  window._fbPush = push; window._fbUpdate = update; window._fbRemove = remove;
   window._fbReady = true;
   window.dispatchEvent(new Event('fb-ready'));
 </script>
@@ -76,29 +72,45 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .btn-primary{background:#C4A96B;color:#1A1E16;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-primary:active{filter:brightness(.9)}
 .btn-secondary{background:#1E221C;color:#E8DFC8;border:1px solid #2A3A28;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer}
-.urgent-toggle-off{padding:12px 14px;border-radius:8px;border:2px solid #3A4A38;background:#1E221C;color:#8A9A86;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
-.urgent-toggle-on{padding:12px 14px;border-radius:8px;border:2px solid #E05555;background:#E05555;color:#fff;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
+/* Task cards */
 .task-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid;border-top:1px solid #2A3A28;border-right:1px solid #2A3A28;border-bottom:1px solid #2A3A28}
-.task-card.urgent{border-left-color:#E05555 !important;background:#2E1A1A;border-top-color:#E0555533 !important;border-right-color:#E0555533 !important;border-bottom-color:#E0555533 !important}
+.task-card.urgent{background:#2E1A1A !important;border-color:#E05555 !important}
+.task-card.deadline{background:#2A2510 !important;border-color:#C4A020 !important}
 .task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .task-title{font-size:16px;font-weight:600;color:#E8DFC8;flex:1}
 .task-del{background:none;border:none;color:#4A5A46;font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
 .task-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px}
 .urgent-badge{background:#E05555;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;animation:pulse 1.5s infinite}
-.deadline-badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;background:#161A13;border:1px solid #3A4A38;color:#8A9A86}
-.deadline-badge.today{color:#E05555;border-color:#E0555544}
+.deadline-badge-tag{background:#C4A020;color:#1A1E16;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;animation:pulse 1.5s infinite}
+.date-badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;background:#161A13;border:1px solid #3A4A38;color:#8A9A86}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 .task-notes{font-size:14px;color:#8A9A86;margin-top:8px;line-height:1.5}
 .status-btns{display:flex;gap:6px;margin-top:10px}
 .status-btn{flex:1;padding:10px 4px;border-radius:8px;border:1px solid #2A3A28;background:#161A13;color:#8A9A86;font-size:13px;font-weight:600;cursor:pointer}
 .status-btn.active{border-color:currentColor}
+/* Urgent toggle */
+.utog-off{padding:12px 14px;border-radius:8px;border:2px solid #3A4A38;background:#1E221C;color:#8A9A86;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
+.utog-on{padding:12px 14px;border-radius:8px;border:2px solid #E05555;background:#E05555;color:#fff;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
+/* Notes */
 .note-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid #2A3A28}
-.note-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.note-card.deleted{background:#161A13;border-color:#2A2A2A;opacity:.6}
+.note-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
 .note-author{font-size:13px;font-weight:700}
-.note-time{font-size:12px;color:#6A7A66}
+.note-meta{font-size:12px;color:#6A7A66;margin-top:2px}
 .note-body{font-size:15px;color:#D8CEB8;line-height:1.6}
-.note-del{background:none;border:none;color:#4A5A46;font-size:20px;cursor:pointer;padding:0 4px}
+.note-del{background:none;border:none;color:#4A5A46;font-size:20px;cursor:pointer;padding:0 4px;flex-shrink:0}
+/* Archive calendar */
+.archive-hdr{font-size:15px;font-weight:700;color:#8A9A86;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-day{padding:8px 4px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;color:#6A7A66}
+.cal-day.has-notes{background:#1E221C;border-color:#2A3A28;color:#E8DFC8}
+.cal-day.has-notes:active{filter:brightness(1.3)}
+.cal-day-label{padding:4px;text-align:center;font-size:11px;color:#4A5A46;font-weight:700}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal-nav button{background:none;border:1px solid #2A3A28;color:#8A9A86;padding:6px 12px;border-radius:8px;font-size:14px;cursor:pointer}
+.cal-nav span{font-size:15px;font-weight:700;color:#E8DFC8}
+.archive-notes-hdr{font-size:14px;font-weight:700;color:#C4A96B;margin:12px 0 8px}
 .empty{text-align:center;color:#4A5A46;font-size:15px;padding:40px 0}
 .syncing{text-align:center;color:#6A7A66;font-size:13px;padding:20px 0}
 </style>
@@ -109,18 +121,18 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 const {useState, useEffect} = React;
 
 const STAFF = {
-  owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑", canDelete:true},
-  gm:        {name:"General Manager", pin:"1111", color:"#8FAF8A", bc:"#8FAF8A", icon:"◈", canDelete:true},
-  manager:   {name:"Manager",         pin:"2222", color:"#A8C4E0", bc:"#A8C4E0", icon:"◆", canDelete:true},
-  chef:      {name:"Head Chef",       pin:"3333", color:"#C4876A", bc:"#C4876A", icon:"◍", canDelete:false},
-  sommelier: {name:"Sommelier",       pin:"4444", color:"#C4A0C4", bc:"#C4A0C4", icon:"◎", canDelete:false},
-  bar:       {name:"Bar Team",        pin:"5555", color:"#7EC8C8", bc:"#7EC8C8", icon:"◐", canDelete:false},
-  service:   {name:"Service",         pin:"6666", color:"#C8C87E", bc:"#C8C87E", icon:"◑", canDelete:false}
+  owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑"},
+  gm:        {name:"General Manager", pin:"1111", color:"#8FAF8A", bc:"#8FAF8A", icon:"◈"},
+  manager:   {name:"Manager",         pin:"2222", color:"#A8C4E0", bc:"#A8C4E0", icon:"◆"},
+  chef:      {name:"Head Chef",       pin:"3333", color:"#C4876A", bc:"#C4876A", icon:"◍"},
+  sommelier: {name:"Sommelier",       pin:"4444", color:"#C4A0C4", bc:"#C4A0C4", icon:"◎"},
+  bar:       {name:"Bar Team",        pin:"5555", color:"#7EC8C8", bc:"#7EC8C8", icon:"◐"},
+  service:   {name:"Service",         pin:"6666", color:"#C8C87E", bc:"#C8C87E", icon:"◑"}
 };
 
 const ROLES = [
   {id:"all", label:"All Staff"},
-  ...Object.entries(STAFF).map(([id,s])=>({id, label:s.name}))
+  ...Object.entries(STAFF).map(([id,s])=>({id,label:s.name}))
 ];
 
 const STATUS = {
@@ -129,21 +141,42 @@ const STATUS = {
   completed:     {label:"Done ✓",      color:"#8FAF8A"}
 };
 
-function ts(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
-function today(){return new Date().toISOString().split('T')[0]}
-function isUrgent(deadline){return deadline && deadline <= today()}
+function todayStr(){return new Date().toISOString().split('T')[0]}
+function tsStr(){
+  const n=new Date();
+  return n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+
+         n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+function dateOnly(ts){
+  // ts is like "23 Mar 2026 14:30" — extract date key YYYY-MM-DD
+  try{return new Date(ts).toISOString().split('T')[0]}catch{return ''}
+}
 function fmtDate(d){
-  if(!d) return '';
+  if(!d)return'';
   const [y,m,day]=d.split('-');
   return `${day}/${m}/${y}`;
 }
 
-function fbRef(path){return window._fbRef(window._fbDb,path)}
-function fbPush(path,val){return window._fbPush(fbRef(path),val)}
-function fbUpdate(path,val){return window._fbUpdate(fbRef(path),val)}
-function fbRemove(path){return window._fbRemove(fbRef(path))}
-function fbListen(path,cb){return window._fbOnValue(fbRef(path),snap=>cb(snap.val()))}
+// URGENT = past deadline OR forceUrgent; DEADLINE = exactly today
+function taskStatus(t){
+  if(t.status==='completed')return'normal';
+  if(t.forceUrgent)return'urgent';
+  const td=todayStr();
+  if(!t.deadline)return'normal';
+  if(t.deadline<td)return'urgent';
+  if(t.deadline===td)return'deadline';
+  return'normal';
+}
 
+function userKey(user){return Object.keys(STAFF).find(k=>STAFF[k].name===user.name)||''}
+
+function fbRef(p){return window._fbRef(window._fbDb,p)}
+function fbPush(p,v){return window._fbPush(fbRef(p),v)}
+function fbUpdate(p,v){return window._fbUpdate(fbRef(p),v)}
+function fbRemove(p){return window._fbRemove(fbRef(p))}
+function fbListen(p,cb){return window._fbOnValue(fbRef(p),s=>cb(s.val()))}
+
+// ── PIN Login ─────────────────────────────────────────────────
 function PinLogin({staff,onSuccess,onBack}){
   const [pin,setPin]=useState('');
   const [err,setErr]=useState(false);
@@ -155,7 +188,6 @@ function PinLogin({staff,onSuccess,onBack}){
       else setTimeout(()=>{setPin('');setErr(true)},300);
     }
   }
-  function del(){setPin(p=>p.slice(0,-1));setErr(false)}
   return(
     <div className="lgn">
       <button className="btn-secondary" onClick={onBack} style={{alignSelf:'flex-start'}}>← Back</button>
@@ -174,12 +206,13 @@ function PinLogin({staff,onSuccess,onBack}){
         ))}
         <div/>
         <button className="pin-key" onClick={()=>press('0')}>0</button>
-        <button className="pin-key del" onClick={del}>⌫</button>
+        <button className="pin-key del" onClick={()=>setPin(p=>p.slice(0,-1))}>⌫</button>
       </div>
     </div>
   );
 }
 
+// ── Add Task Form ─────────────────────────────────────────────
 function AddTaskForm({user,onCancel}){
   const [title,setTitle]=useState('');
   const [notes,setNotes]=useState('');
@@ -192,7 +225,7 @@ function AddTaskForm({user,onCancel}){
     if(!title.trim()||!deadline){setErr(true);return;}
     fbPush('tasks',{
       title:title.trim(),notes:notes.trim(),assignee:assign,
-      status:'pending',createdBy:user.name,createdAt:ts(),
+      status:'pending',createdBy:user.name,createdAt:tsStr(),
       createdTs:Date.now(),deadline,forceUrgent
     });
     onCancel();
@@ -201,39 +234,31 @@ function AddTaskForm({user,onCancel}){
   return(
     <div className="add-form">
       <div style={{fontSize:'15px',fontWeight:'700',color:'#E8DFC8'}}>New Task</div>
-
       <div>
         <div className="form-label">Task title *</div>
         <input placeholder="e.g. Polish glassware" value={title} onChange={e=>setTitle(e.target.value)}/>
       </div>
-
       <div>
         <div className="form-label">Notes (optional)</div>
         <textarea placeholder="Additional details..." value={notes} onChange={e=>setNotes(e.target.value)}/>
       </div>
-
       <div>
         <div className="form-label">Deadline *</div>
         <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
-          <input type="date" value={deadline} min={today()} onChange={e=>setDeadline(e.target.value)}
+          <input type="date" value={deadline} min={todayStr()} onChange={e=>setDeadline(e.target.value)}
             style={{flex:1,background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',outline:'none',colorScheme:'dark'}}/>
-          <button
-            onClick={()=>setForceUrgent(u=>!u)}
-            className={forceUrgent?'urgent-toggle-on':'urgent-toggle-off'}>
+          <button onClick={()=>setForceUrgent(u=>!u)} className={forceUrgent?'utog-on':'utog-off'}>
             ⚠ URGENT
           </button>
         </div>
       </div>
-
       <div>
         <div className="form-label">Assign to</div>
         <select value={assign} onChange={e=>setAssign(e.target.value)}>
           {ROLES.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}
         </select>
       </div>
-
       {err&&<div style={{color:'#E05555',fontSize:'13px'}}>Please fill in title and deadline.</div>}
-
       <div style={{display:'flex',gap:'8px'}}>
         <button className="btn-secondary" style={{flex:1}} onClick={onCancel}>Cancel</button>
         <button className="btn-primary" style={{flex:2}} onClick={submit}>Add Task</button>
@@ -242,40 +267,41 @@ function AddTaskForm({user,onCancel}){
   );
 }
 
+// ── Task Card ─────────────────────────────────────────────────
 function TaskCard({fbKey,task,user}){
   const authorStaff=Object.values(STAFF).find(s=>s.name===task.createdBy);
   const authorColor=authorStaff?.color||'#8A9A86';
   const assignColor=task.assignee==='all'?'#8A9A86':(STAFF[task.assignee]?.color||'#8A9A86');
   const assignLabel=task.assignee==='all'?'All Staff':(STAFF[task.assignee]?.name||task.assignee);
-  const isOwner=Object.keys(STAFF).find(k=>STAFF[k].name===user.name)==='owner';
+  const isOwner=userKey(user)==='owner';
   const canDel=isOwner||(task.createdBy===user.name);
-  const urgent=task.status!=='completed'&&(task.forceUrgent||isUrgent(task.deadline));
-  const isToday=task.deadline===today();
+  const tStatus=taskStatus(task);
 
   function setStatus(s){fbUpdate(`tasks/${fbKey}`,{status:s})}
   function del(){fbRemove(`tasks/${fbKey}`)}
 
+  let cardClass='task-card';
+  let borderColor=STATUS[task.status].color;
+  if(tStatus==='urgent'){cardClass='task-card urgent';borderColor=undefined;}
+  else if(tStatus==='deadline'){cardClass='task-card deadline';borderColor=undefined;}
+
   return(
-    <div className={`task-card${urgent?' urgent':''}`} style={!urgent?{borderLeftColor:STATUS[task.status].color}:{}}>
+    <div className={cardClass} style={borderColor?{borderLeftColor:borderColor}:{}}>
       <div className="task-top">
         <div className="task-title">{task.title}</div>
         {canDel&&<button className="task-del" onClick={del}>×</button>}
       </div>
       {task.notes&&<div className="task-notes">{task.notes}</div>}
       <div className="task-meta">
-        {urgent&&<span className="urgent-badge">⚠ URGENT</span>}
-        {task.deadline&&(
-          <span className={`deadline-badge${isToday?' today':''}`}>
-            📅 {fmtDate(task.deadline)}{isToday?' — Today':''}
-          </span>
-        )}
+        {tStatus==='urgent'&&<span className="urgent-badge">⚠ URGENT</span>}
+        {tStatus==='deadline'&&<span className="deadline-badge-tag">⏰ DEADLINE</span>}
+        {task.deadline&&<span className="date-badge">📅 {fmtDate(task.deadline)}</span>}
         <span className="badge" style={{background:'#161A13',color:assignColor,border:`1px solid ${assignColor}44`}}>→ {assignLabel}</span>
         <span className="badge" style={{background:'#161A13',color:authorColor,border:`1px solid ${authorColor}44`}}>by {task.createdBy}</span>
       </div>
       <div className="status-btns">
         {Object.entries(STATUS).map(([k,v])=>(
-          <button key={k}
-            className={`status-btn${task.status===k?' active':''}`}
+          <button key={k} className={`status-btn${task.status===k?' active':''}`}
             style={{color:task.status===k?v.color:'#6A7A66',borderColor:task.status===k?v.color:'#2A3A28'}}
             onClick={()=>setStatus(k)}>{v.label}</button>
         ))}
@@ -284,28 +310,29 @@ function TaskCard({fbKey,task,user}){
   );
 }
 
+// ── Tasks Tab ─────────────────────────────────────────────────
 function TasksTab({user,tasks}){
   const [showForm,setShowForm]=useState(false);
-  const groups={pending:[],["in-progress"]:[],completed:[]};
+  const uk=userKey(user);
+  const isOwner=uk==='owner';
 
-  function canSeeTask(t){
-    if(t.assignee==='all')return true;
-    if(user.canDelete)return true;
-    if(t.createdBy===user.name)return true;
-    const userKey=Object.keys(STAFF).find(k=>STAFF[k].name===user.name);
-    return t.assignee===userKey;
+  function canSee(t){
+    if(isOwner)return true;                          // Owner sees all
+    if(t.assignee==='all')return true;               // All staff tasks
+    if(t.createdBy===user.name)return true;          // Created by me
+    return t.assignee===uk;                          // Assigned to me
   }
 
+  const groups={pending:[],["in-progress"]:[],completed:[]};
   Object.entries(tasks).forEach(([k,t])=>{
-    if(canSeeTask(t)&&groups[t.status])groups[t.status].push({fbKey:k,...t});
+    if(canSee(t)&&groups[t.status])groups[t.status].push({fbKey:k,...t});
   });
 
   function sortTasks(arr){
     return arr.sort((a,b)=>{
-      const au=(a.forceUrgent||isUrgent(a.deadline))&&a.status!=='completed';
-      const bu=(b.forceUrgent||isUrgent(b.deadline))&&b.status!=='completed';
-      if(au&&!bu)return -1;
-      if(!au&&bu)return 1;
+      const ap=taskStatus(a)==='urgent'?0:taskStatus(a)==='deadline'?1:2;
+      const bp=taskStatus(b)==='urgent'?0:taskStatus(b)==='deadline'?1:2;
+      if(ap!==bp)return ap-bp;
       if(a.deadline&&b.deadline)return a.deadline.localeCompare(b.deadline);
       return b.createdTs-a.createdTs;
     });
@@ -328,15 +355,61 @@ function TasksTab({user,tasks}){
   );
 }
 
+// ── Notes Tab ─────────────────────────────────────────────────
 function NotesTab({user,notes}){
   const [text,setText]=useState('');
+  const [calDate,setCalDate]=useState(null); // selected archive date
+  const [calMonth,setCalMonth]=useState(()=>{const n=new Date();return{y:n.getFullYear(),m:n.getMonth()}});
+
   function addNote(){
     if(!text.trim())return;
     const authorColor=Object.values(STAFF).find(s=>s.name===user.name)?.color||'#8A9A86';
-    fbPush('notes',{author:user.name,authorColor,body:text.trim(),time:ts(),createdTs:Date.now()});
+    const dateKey=todayStr();
+    fbPush('notes',{
+      author:user.name,authorColor,body:text.trim(),
+      ts:tsStr(),dateKey,createdTs:Date.now(),deleted:false
+    });
     setText('');
   }
-  const sorted=Object.entries(notes).sort((a,b)=>b[1].createdTs-a[1].createdTs);
+
+  function deleteNote(k,n){
+    fbUpdate(`notes/${k}`,{deleted:true,deletedBy:user.name,body:n.body});
+  }
+
+  // Split notes: last 7 days vs archive
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);
+  const cutoffStr=cutoff.toISOString().split('T')[0];
+
+  const recent=[];
+  const archiveMap={};
+  Object.entries(notes).forEach(([k,n])=>{
+    const d=n.dateKey||dateOnly(n.ts||'');
+    if(d>=cutoffStr){recent.push({k,...n});}
+    else{
+      if(!archiveMap[d])archiveMap[d]=[];
+      archiveMap[d].push({k,...n});
+    }
+  });
+  recent.sort((a,b)=>b.createdTs-a.createdTs);
+
+  // Calendar helpers
+  const daysInMonth=(y,m)=>new Date(y,m+1,0).getDate();
+  const firstDay=(y,m)=>new Date(y,m,1).getDay();
+  const monthName=(y,m)=>new Date(y,m,1).toLocaleString('default',{month:'long',year:'numeric'});
+
+  function prevMonth(){setCalMonth(c=>{const d=new Date(c.y,c.m-1);return{y:d.getFullYear(),m:d.getMonth()}})}
+  function nextMonth(){setCalMonth(c=>{const d=new Date(c.y,c.m+1);return{y:d.getFullYear(),m:d.getMonth()}})}
+
+  const days=daysInMonth(calMonth.y,calMonth.m);
+  const startDay=firstDay(calMonth.y,calMonth.m);
+  const dayLabels=['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  function dateKey(y,m,d){
+    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+
+  const selectedNotes=calDate?archiveMap[calDate]||[]:[];
+
   return(
     <div className="content">
       <div className="add-form">
@@ -345,24 +418,80 @@ function NotesTab({user,notes}){
           style={{height:'80px',background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',width:'100%',outline:'none',resize:'none'}}/>
         <button className="btn-primary" onClick={addNote}>Post Note</button>
       </div>
-      {sorted.length===0&&<div className="empty">No shift notes yet</div>}
-      {sorted.map(([k,n])=>(
-        <div key={k} className="note-card">
+
+      {/* Recent 7 days */}
+      {recent.length===0&&<div className="empty">No shift notes in the last 7 days</div>}
+      {recent.map(n=>(
+        <div key={n.k} className={`note-card${n.deleted?' deleted':''}`}>
           <div className="note-header">
-            <span className="note-author" style={{color:n.authorColor}}>{n.author}</span>
-            <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
-              <span className="note-time">{n.time}</span>
-              {(user.canDelete||n.author===user.name)&&
-                <button className="note-del" onClick={()=>fbRemove(`notes/${k}`)}>×</button>}
+            <div>
+              <span className="note-author" style={{color:n.deleted?'#6A7A66':n.authorColor}}>
+                {n.deleted?'—':n.author}
+              </span>
+              <div className="note-meta">{n.ts}</div>
             </div>
+            {!n.deleted&&<button className="note-del" onClick={()=>deleteNote(n.k,n)}>×</button>}
           </div>
-          <div className="note-body">{n.body}</div>
+          {n.deleted
+            ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
+            :<div className="note-body">{n.body}</div>
+          }
         </div>
       ))}
+
+      {/* Archive calendar */}
+      {Object.keys(archiveMap).length>0&&(
+        <>
+          <div className="archive-hdr">📅 Archive</div>
+          <div className="cal-nav">
+            <button onClick={prevMonth}>‹</button>
+            <span>{monthName(calMonth.y,calMonth.m)}</span>
+            <button onClick={nextMonth}>›</button>
+          </div>
+          <div className="cal-grid">
+            {dayLabels.map(d=><div key={d} className="cal-day-label">{d}</div>)}
+            {Array(startDay).fill(null).map((_,i)=><div key={'e'+i}/>)}
+            {Array(days).fill(null).map((_,i)=>{
+              const dk=dateKey(calMonth.y,calMonth.m,i+1);
+              const has=!!archiveMap[dk];
+              const sel=calDate===dk;
+              return(
+                <div key={i} className={`cal-day${has?' has-notes':''}`}
+                  style={sel?{background:'#C4A96B',color:'#1A1E16',borderColor:'#C4A96B'}:{}}
+                  onClick={()=>has&&setCalDate(sel?null:dk)}>
+                  {i+1}
+                </div>
+              );
+            })}
+          </div>
+          {calDate&&(
+            <>
+              <div className="archive-notes-hdr">Notes for {fmtDate(calDate)}</div>
+              {selectedNotes.sort((a,b)=>b.createdTs-a.createdTs).map(n=>(
+                <div key={n.k} className={`note-card${n.deleted?' deleted':''}`}>
+                  <div className="note-header">
+                    <div>
+                      <span className="note-author" style={{color:n.deleted?'#6A7A66':n.authorColor}}>
+                        {n.deleted?'—':n.author}
+                      </span>
+                      <div className="note-meta">{n.ts}</div>
+                    </div>
+                  </div>
+                  {n.deleted
+                    ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
+                    :<div className="note-body">{n.body}</div>
+                  }
+                </div>
+              ))}
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
+// ── Main App ──────────────────────────────────────────────────
 function App(){
   const [fbReady,setFbReady]=useState(!!window._fbReady);
   const [user,setUser]=useState(null);
@@ -378,9 +507,9 @@ function App(){
 
   useEffect(()=>{
     if(!fbReady)return;
-    const unsubT=fbListen('tasks',d=>setTasks(d||{}));
-    const unsubN=fbListen('notes',d=>setNotes(d||{}));
-    return()=>{unsubT();unsubN()};
+    const ut=fbListen('tasks',d=>setTasks(d||{}));
+    const un=fbListen('notes',d=>setNotes(d||{}));
+    return()=>{ut();un()};
   },[fbReady]);
 
   if(!fbReady)return <div className="lgn"><div className="syncing">Connecting…</div></div>;
@@ -410,9 +539,21 @@ function App(){
       onBack={()=>setPinFor(null)}/>
   );
 
-  const urgentCount=Object.values(tasks).filter(t=>t.status!=='completed'&&(t.forceUrgent||isUrgent(t.deadline))).length;
-  const activeTasks=Object.values(tasks).filter(t=>t.status!=='completed').length;
-  const noteCount=Object.keys(notes).length;
+  const visibleTasks=Object.values(tasks).filter(t=>{
+    const uk=userKey(user);
+    const isOwner=uk==='owner';
+    if(isOwner)return true;
+    if(t.assignee==='all')return true;
+    if(t.createdBy===user.name)return true;
+    return t.assignee===uk;
+  });
+  const urgentCount=visibleTasks.filter(t=>t.status!=='completed'&&taskStatus(t)==='urgent').length;
+  const deadlineCount=visibleTasks.filter(t=>t.status!=='completed'&&taskStatus(t)==='deadline').length;
+  const activeOther=visibleTasks.filter(t=>t.status!=='completed'&&taskStatus(t)==='normal').length;
+
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);
+  const cutoffStr=cutoff.toISOString().split('T')[0];
+  const recentNotes=Object.values(notes).filter(n=>(n.dateKey||'')>=cutoffStr).length;
 
   return(
     <div className="app">
@@ -426,11 +567,13 @@ function App(){
       <div className="tabs">
         <div className={`tab${tab==='tasks'?' active':''}`} onClick={()=>setTab('tasks')}>
           Tasks
-          {urgentCount>0&&<span style={{background:'#E05555',color:'#fff',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'5px'}}>{urgentCount} urgent</span>}
-          {activeTasks>urgentCount&&<span style={{background:'#C4A96B',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{activeTasks-urgentCount}</span>}
+          {urgentCount>0&&<span style={{background:'#E05555',color:'#fff',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{urgentCount}</span>}
+          {deadlineCount>0&&<span style={{background:'#C4A020',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{deadlineCount}</span>}
+          {activeOther>0&&<span style={{background:'#C4A96B',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{activeOther}</span>}
         </div>
         <div className={`tab${tab==='notes'?' active':''}`} onClick={()=>setTab('notes')}>
-          Shift Notes{noteCount>0&&<span style={{background:'#8FAF8A',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'5px'}}>{noteCount}</span>}
+          Shift Notes
+          {recentNotes>0&&<span style={{background:'#8FAF8A',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{recentNotes}</span>}
         </div>
       </div>
       {tab==='tasks'
