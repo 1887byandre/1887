@@ -25,9 +25,9 @@
   };
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  window._fbDb = db; window._fbRef = ref; window._fbOnValue = onValue;
-  window._fbPush = push; window._fbUpdate = update; window._fbRemove = remove;
-  window._fbReady = true;
+  window._fbDb=db; window._fbRef=ref; window._fbOnValue=onValue;
+  window._fbPush=push; window._fbUpdate=update; window._fbRemove=remove;
+  window._fbReady=true;
   window.dispatchEvent(new Event('fb-ready'));
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -48,7 +48,7 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .staff-btn:active{filter:brightness(1.2)}
 .staff-icon{font-size:26px}
 .staff-name{font-size:13px;font-weight:600;text-align:center;line-height:1.3}
-.pin-title{font-size:17px;font-weight:600;color:#E8DFC8}
+.pin-title{font-size:17px;font-weight:600}
 .pin-dots{display:flex;gap:12px}
 .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #4A5A46;background:transparent;transition:background .1s}
 .pin-dot.filled{background:#C4A96B;border-color:#C4A96B}
@@ -57,6 +57,17 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .pin-key:active{background:#2A3A28}
 .pin-key.del{font-size:16px;color:#8A9A86}
 .pin-err{color:#C4876A;font-size:14px;text-align:center}
+.bio-box{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+.bio-btn{background:#1E221C;border:2px solid;border-radius:16px;padding:28px 20px;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer}
+.bio-btn:active{filter:brightness(1.2)}
+.bio-icon{font-size:48px}
+.bio-label{font-size:16px;font-weight:700}
+.bio-sub{font-size:13px;color:#6A7A66}
+.bio-err{color:#C4876A;font-size:14px;text-align:center}
+.link-btn{background:none;border:none;color:#6A7A66;font-size:14px;cursor:pointer;text-decoration:underline;padding:4px}
+.setup-box{background:#1E221C;border-radius:16px;padding:24px;border:1px solid #2A3A28;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;width:100%}
+.setup-title{font-size:17px;font-weight:700;color:#E8DFC8}
+.setup-sub{font-size:14px;color:#8A9A86;line-height:1.5}
 .tabs{display:flex;border-bottom:1px solid #2A3A28;background:#161A13}
 .tab{flex:1;padding:14px 8px;text-align:center;font-size:15px;font-weight:600;color:#6A7A66;cursor:pointer;border-bottom:2px solid transparent}
 .tab.active{color:#E8DFC8;border-bottom-color:#C4A96B}
@@ -72,7 +83,8 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .btn-primary{background:#C4A96B;color:#1A1E16;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-primary:active{filter:brightness(.9)}
 .btn-secondary{background:#1E221C;color:#E8DFC8;border:1px solid #2A3A28;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer}
-/* Task cards */
+.utog-off{padding:12px 14px;border-radius:8px;border:2px solid #3A4A38;background:#1E221C;color:#8A9A86;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
+.utog-on{padding:12px 14px;border-radius:8px;border:2px solid #E05555;background:#E05555;color:#fff;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
 .task-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid;border-top:1px solid #2A3A28;border-right:1px solid #2A3A28;border-bottom:1px solid #2A3A28}
 .task-card.urgent{background:#2E1A1A !important;border-color:#E05555 !important}
 .task-card.deadline{background:#2A2510 !important;border-color:#C4A020 !important}
@@ -89,10 +101,6 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .status-btns{display:flex;gap:6px;margin-top:10px}
 .status-btn{flex:1;padding:10px 4px;border-radius:8px;border:1px solid #2A3A28;background:#161A13;color:#8A9A86;font-size:13px;font-weight:600;cursor:pointer}
 .status-btn.active{border-color:currentColor}
-/* Urgent toggle */
-.utog-off{padding:12px 14px;border-radius:8px;border:2px solid #3A4A38;background:#1E221C;color:#8A9A86;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
-.utog-on{padding:12px 14px;border-radius:8px;border:2px solid #E05555;background:#E05555;color:#fff;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
-/* Notes */
 .note-card{background:#1E221C;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid #2A3A28}
 .note-card.deleted{background:#161A13;border-color:#2A2A2A;opacity:.6}
 .note-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
@@ -100,12 +108,10 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 .note-meta{font-size:12px;color:#6A7A66;margin-top:2px}
 .note-body{font-size:15px;color:#D8CEB8;line-height:1.6}
 .note-del{background:none;border:none;color:#4A5A46;font-size:20px;cursor:pointer;padding:0 4px;flex-shrink:0}
-/* Archive calendar */
 .archive-hdr{font-size:15px;font-weight:700;color:#8A9A86;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
 .cal-day{padding:8px 4px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;color:#6A7A66}
 .cal-day.has-notes{background:#1E221C;border-color:#2A3A28;color:#E8DFC8}
-.cal-day.has-notes:active{filter:brightness(1.3)}
 .cal-day-label{padding:4px;text-align:center;font-size:11px;color:#4A5A46;font-weight:700}
 .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .cal-nav button{background:none;border:1px solid #2A3A28;color:#8A9A86;padding:6px 12px;border-radius:8px;font-size:14px;cursor:pointer}
@@ -118,7 +124,7 @@ body{font-family:'Inter',sans-serif;background:#1A1E16;color:#E8DFC8;overflow-x:
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect} = React;
+const {useState,useEffect} = React;
 
 const STAFF = {
   owner:     {name:"Owner",           pin:"0000", color:"#C4A96B", bc:"#C4A96B", icon:"👑"},
@@ -130,35 +136,13 @@ const STAFF = {
   service:   {name:"Service",         pin:"6666", color:"#C8C87E", bc:"#C8C87E", icon:"◑"}
 };
 
-const ROLES = [
-  {id:"all", label:"All Staff"},
-  ...Object.entries(STAFF).map(([id,s])=>({id,label:s.name}))
-];
-
-const STATUS = {
-  pending:       {label:"To Do",       color:"#8A9A86"},
-  "in-progress": {label:"In Progress", color:"#C4A96B"},
-  completed:     {label:"Done ✓",      color:"#8FAF8A"}
-};
+const ROLES=[{id:"all",label:"All Staff"},...Object.entries(STAFF).map(([id,s])=>({id,label:s.name}))];
+const STATUS={pending:{label:"To Do",color:"#8A9A86"},"in-progress":{label:"In Progress",color:"#C4A96B"},completed:{label:"Done ✓",color:"#8FAF8A"}};
 
 function todayStr(){return new Date().toISOString().split('T')[0]}
-function tsStr(){
-  const n=new Date();
-  return n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+
-         n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-}
-function dateOnly(ts){
-  // ts is like "23 Mar 2026 14:30" — extract date key YYYY-MM-DD
-  try{return new Date(ts).toISOString().split('T')[0]}catch{return ''}
-}
-function fmtDate(d){
-  if(!d)return'';
-  const [y,m,day]=d.split('-');
-  return `${day}/${m}/${y}`;
-}
-
-// URGENT = past deadline OR forceUrgent; DEADLINE = exactly today
-function taskStatus(t){
+function tsStr(){const n=new Date();return n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+function fmtDate(d){if(!d)return'';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`}
+function taskPriority(t){
   if(t.status==='completed')return'normal';
   if(t.forceUrgent)return'urgent';
   const td=todayStr();
@@ -167,14 +151,70 @@ function taskStatus(t){
   if(t.deadline===td)return'deadline';
   return'normal';
 }
-
-function userKey(user){return Object.keys(STAFF).find(k=>STAFF[k].name===user.name)||''}
+function userKey(u){return Object.keys(STAFF).find(k=>STAFF[k].name===u.name)||''}
 
 function fbRef(p){return window._fbRef(window._fbDb,p)}
 function fbPush(p,v){return window._fbPush(fbRef(p),v)}
 function fbUpdate(p,v){return window._fbUpdate(fbRef(p),v)}
 function fbRemove(p){return window._fbRemove(fbRef(p))}
 function fbListen(p,cb){return window._fbOnValue(fbRef(p),s=>cb(s.val()))}
+
+// ── WebAuthn / Biometric helpers ──────────────────────────────
+const LS_KEY='1887_biometric_role';
+
+function bioAvailable(){
+  return !!(window.PublicKeyCredential&&navigator.credentials);
+}
+
+function getBioRole(){
+  try{return localStorage.getItem(LS_KEY)}catch{return null}
+}
+function setBioRole(roleKey){
+  try{localStorage.setItem(LS_KEY,roleKey)}catch{}
+}
+function clearBioRole(){
+  try{localStorage.removeItem(LS_KEY)}catch{}
+}
+
+function b64url(buf){
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+function rnd(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return a}
+
+async function registerBio(roleKey){
+  const cred=await navigator.credentials.create({publicKey:{
+    challenge:rnd(32),
+    rp:{name:"1887 Mise en Place"},
+    user:{id:rnd(16),name:roleKey,displayName:STAFF[roleKey].name},
+    pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
+    authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required"},
+    timeout:60000
+  }});
+  if(cred){
+    setBioRole(roleKey);
+    localStorage.setItem('1887_cred_id',b64url(cred.rawId));
+    return true;
+  }
+  return false;
+}
+
+async function authenticateBio(){
+  const credIdStr=localStorage.getItem('1887_cred_id');
+  const opts={publicKey:{
+    challenge:rnd(32),
+    userVerification:"required",
+    timeout:60000
+  }};
+  if(credIdStr){
+    const bin=atob(credIdStr.replace(/-/g,'+').replace(/_/g,'/'));
+    const buf=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);
+    opts.publicKey.allowCredentials=[{type:"public-key",id:buf.buffer,transports:["internal"]}];
+  }
+  const assertion=await navigator.credentials.get(opts);
+  return !!assertion;
+}
 
 // ── PIN Login ─────────────────────────────────────────────────
 function PinLogin({staff,onSuccess,onBack}){
@@ -212,6 +252,83 @@ function PinLogin({staff,onSuccess,onBack}){
   );
 }
 
+// ── Biometric Login ───────────────────────────────────────────
+function BioLogin({roleKey,onSuccess,onUsePIN,onBack}){
+  const staff=STAFF[roleKey];
+  const [err,setErr]=useState('');
+  const [trying,setTrying]=useState(false);
+
+  async function tryBio(){
+    setTrying(true);setErr('');
+    try{
+      const ok=await authenticateBio();
+      if(ok)onSuccess();
+      else setErr('Authentication failed. Try again or use PIN.');
+    }catch(e){
+      setErr('Biometric not recognised. Use PIN instead.');
+    }
+    setTrying(false);
+  }
+
+  useEffect(()=>{tryBio();},[]);
+
+  return(
+    <div className="lgn">
+      <button className="btn-secondary" onClick={onBack} style={{alignSelf:'flex-start'}}>← Back</button>
+      <div style={{textAlign:'center'}}>
+        <div style={{fontSize:'28px',marginBottom:'8px'}}>{staff.icon}</div>
+        <div className="pin-title" style={{color:staff.color}}>{staff.name}</div>
+      </div>
+      <div className="bio-box">
+        <button className="bio-btn" style={{borderColor:staff.bc+'66',color:staff.color}} onClick={tryBio} disabled={trying}>
+          <span className="bio-icon">{trying?'⏳':'🔐'}</span>
+          <span className="bio-label">{trying?'Authenticating…':'Use Face ID / Touch ID'}</span>
+          <span className="bio-sub">Tap to unlock as {staff.name}</span>
+        </button>
+        {err&&<div className="bio-err">{err}</div>}
+        <button className="link-btn" onClick={onUsePIN}>Use PIN instead</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Bio Setup Prompt ──────────────────────────────────────────
+function BioSetup({roleKey,onDone}){
+  const staff=STAFF[roleKey];
+  const [status,setStatus]=useState('idle');
+
+  async function setup(){
+    setStatus('setting');
+    try{
+      const ok=await registerBio(roleKey);
+      setStatus(ok?'done':'failed');
+    }catch{setStatus('failed')}
+  }
+
+  return(
+    <div className="lgn">
+      <div className="setup-box">
+        <div style={{fontSize:'40px'}}>🔐</div>
+        <div className="setup-title">Set up Face ID / Touch ID</div>
+        <div className="setup-sub">
+          Next time you open the app, you can log in as <span style={{color:staff.color,fontWeight:700}}>{staff.name}</span> using Face ID or Touch ID — no PIN needed.
+        </div>
+        {status==='failed'&&<div className="bio-err">Setup failed. You can set it up later.</div>}
+        {status==='done'&&<div style={{color:'#8FAF8A',fontSize:'14px'}}>✓ Set up successfully!</div>}
+        {status!=='done'
+          ?<div style={{display:'flex',gap:'8px',width:'100%'}}>
+            <button className="btn-secondary" style={{flex:1}} onClick={onDone}>Skip</button>
+            <button className="btn-primary" style={{flex:2}} onClick={setup} disabled={status==='setting'}>
+              {status==='setting'?'Setting up…':'Set up now'}
+            </button>
+          </div>
+          :<button className="btn-primary" onClick={onDone}>Continue</button>
+        }
+      </div>
+    </div>
+  );
+}
+
 // ── Add Task Form ─────────────────────────────────────────────
 function AddTaskForm({user,onCancel}){
   const [title,setTitle]=useState('');
@@ -223,41 +340,29 @@ function AddTaskForm({user,onCancel}){
 
   function submit(){
     if(!title.trim()||!deadline){setErr(true);return;}
-    fbPush('tasks',{
-      title:title.trim(),notes:notes.trim(),assignee:assign,
-      status:'pending',createdBy:user.name,createdAt:tsStr(),
-      createdTs:Date.now(),deadline,forceUrgent
-    });
+    fbPush('tasks',{title:title.trim(),notes:notes.trim(),assignee:assign,status:'pending',
+      createdBy:user.name,createdAt:tsStr(),createdTs:Date.now(),deadline,forceUrgent});
     onCancel();
   }
 
   return(
     <div className="add-form">
       <div style={{fontSize:'15px',fontWeight:'700',color:'#E8DFC8'}}>New Task</div>
-      <div>
-        <div className="form-label">Task title *</div>
-        <input placeholder="e.g. Polish glassware" value={title} onChange={e=>setTitle(e.target.value)}/>
-      </div>
-      <div>
-        <div className="form-label">Notes (optional)</div>
-        <textarea placeholder="Additional details..." value={notes} onChange={e=>setNotes(e.target.value)}/>
-      </div>
-      <div>
-        <div className="form-label">Deadline *</div>
+      <div><div className="form-label">Task title *</div>
+        <input placeholder="e.g. Polish glassware" value={title} onChange={e=>setTitle(e.target.value)}/></div>
+      <div><div className="form-label">Notes (optional)</div>
+        <textarea placeholder="Additional details..." value={notes} onChange={e=>setNotes(e.target.value)}/></div>
+      <div><div className="form-label">Deadline *</div>
         <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
           <input type="date" value={deadline} min={todayStr()} onChange={e=>setDeadline(e.target.value)}
             style={{flex:1,background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',outline:'none',colorScheme:'dark'}}/>
-          <button onClick={()=>setForceUrgent(u=>!u)} className={forceUrgent?'utog-on':'utog-off'}>
-            ⚠ URGENT
-          </button>
+          <button onClick={()=>setForceUrgent(u=>!u)} className={forceUrgent?'utog-on':'utog-off'}>⚠ URGENT</button>
         </div>
       </div>
-      <div>
-        <div className="form-label">Assign to</div>
+      <div><div className="form-label">Assign to</div>
         <select value={assign} onChange={e=>setAssign(e.target.value)}>
           {ROLES.map(r=><option key={r.id} value={r.id}>{r.label}</option>)}
-        </select>
-      </div>
+        </select></div>
       {err&&<div style={{color:'#E05555',fontSize:'13px'}}>Please fill in title and deadline.</div>}
       <div style={{display:'flex',gap:'8px'}}>
         <button className="btn-secondary" style={{flex:1}} onClick={onCancel}>Cancel</button>
@@ -275,26 +380,19 @@ function TaskCard({fbKey,task,user}){
   const assignLabel=task.assignee==='all'?'All Staff':(STAFF[task.assignee]?.name||task.assignee);
   const isOwner=userKey(user)==='owner';
   const canDel=isOwner||(task.createdBy===user.name);
-  const tStatus=taskStatus(task);
-
-  function setStatus(s){fbUpdate(`tasks/${fbKey}`,{status:s})}
-  function del(){fbRemove(`tasks/${fbKey}`)}
-
-  let cardClass='task-card';
-  let borderColor=STATUS[task.status].color;
-  if(tStatus==='urgent'){cardClass='task-card urgent';borderColor=undefined;}
-  else if(tStatus==='deadline'){cardClass='task-card deadline';borderColor=undefined;}
+  const tp=taskPriority(task);
 
   return(
-    <div className={cardClass} style={borderColor?{borderLeftColor:borderColor}:{}}>
+    <div className={`task-card${tp==='urgent'?' urgent':tp==='deadline'?' deadline':''}`}
+      style={tp==='normal'?{borderLeftColor:STATUS[task.status].color}:{}}>
       <div className="task-top">
         <div className="task-title">{task.title}</div>
-        {canDel&&<button className="task-del" onClick={del}>×</button>}
+        {canDel&&<button className="task-del" onClick={()=>fbRemove(`tasks/${fbKey}`)}>×</button>}
       </div>
       {task.notes&&<div className="task-notes">{task.notes}</div>}
       <div className="task-meta">
-        {tStatus==='urgent'&&<span className="urgent-badge">⚠ URGENT</span>}
-        {tStatus==='deadline'&&<span className="deadline-badge-tag">⏰ DEADLINE</span>}
+        {tp==='urgent'&&<span className="urgent-badge">⚠ URGENT</span>}
+        {tp==='deadline'&&<span className="deadline-badge-tag">⏰ DEADLINE</span>}
         {task.deadline&&<span className="date-badge">📅 {fmtDate(task.deadline)}</span>}
         <span className="badge" style={{background:'#161A13',color:assignColor,border:`1px solid ${assignColor}44`}}>→ {assignLabel}</span>
         <span className="badge" style={{background:'#161A13',color:authorColor,border:`1px solid ${authorColor}44`}}>by {task.createdBy}</span>
@@ -303,7 +401,7 @@ function TaskCard({fbKey,task,user}){
         {Object.entries(STATUS).map(([k,v])=>(
           <button key={k} className={`status-btn${task.status===k?' active':''}`}
             style={{color:task.status===k?v.color:'#6A7A66',borderColor:task.status===k?v.color:'#2A3A28'}}
-            onClick={()=>setStatus(k)}>{v.label}</button>
+            onClick={()=>fbUpdate(`tasks/${fbKey}`,{status:k})}>{v.label}</button>
         ))}
       </div>
     </div>
@@ -317,10 +415,10 @@ function TasksTab({user,tasks}){
   const isOwner=uk==='owner';
 
   function canSee(t){
-    if(isOwner)return true;                          // Only Owner sees all
-    if(t.assignee==='all')return true;               // All staff tasks visible to everyone
-    if(t.createdBy===user.name)return true;          // I created it
-    return t.assignee===uk;                          // Assigned directly to me
+    if(isOwner)return true;
+    if(t.assignee==='all')return true;
+    if(t.createdBy===user.name)return true;
+    return t.assignee===uk;
   }
 
   const groups={pending:[],["in-progress"]:[],completed:[]};
@@ -330,8 +428,8 @@ function TasksTab({user,tasks}){
 
   function sortTasks(arr){
     return arr.sort((a,b)=>{
-      const ap=taskStatus(a)==='urgent'?0:taskStatus(a)==='deadline'?1:2;
-      const bp=taskStatus(b)==='urgent'?0:taskStatus(b)==='deadline'?1:2;
+      const ap=taskPriority(a)==='urgent'?0:taskPriority(a)==='deadline'?1:2;
+      const bp=taskPriority(b)==='urgent'?0:taskPriority(b)==='deadline'?1:2;
       if(ap!==bp)return ap-bp;
       if(a.deadline&&b.deadline)return a.deadline.localeCompare(b.deadline);
       return b.createdTs-a.createdTs;
@@ -342,8 +440,7 @@ function TasksTab({user,tasks}){
     <div className="content">
       {showForm
         ?<AddTaskForm user={user} onCancel={()=>setShowForm(false)}/>
-        :<button className="btn-primary" style={{marginBottom:'14px'}} onClick={()=>setShowForm(true)}>+ New Task</button>
-      }
+        :<button className="btn-primary" style={{marginBottom:'14px'}} onClick={()=>setShowForm(true)}>+ New Task</button>}
       {Object.entries(STATUS).map(([sk,sv])=>(
         <div key={sk}>
           <div className="section-label" style={{color:sv.color}}>{sv.label} ({groups[sk].length})</div>
@@ -358,57 +455,56 @@ function TasksTab({user,tasks}){
 // ── Notes Tab ─────────────────────────────────────────────────
 function NotesTab({user,notes}){
   const [text,setText]=useState('');
-  const [calDate,setCalDate]=useState(null); // selected archive date
+  const [calDate,setCalDate]=useState(null);
   const [calMonth,setCalMonth]=useState(()=>{const n=new Date();return{y:n.getFullYear(),m:n.getMonth()}});
 
   function addNote(){
     if(!text.trim())return;
     const authorColor=Object.values(STAFF).find(s=>s.name===user.name)?.color||'#8A9A86';
-    const dateKey=todayStr();
-    fbPush('notes',{
-      author:user.name,authorColor,body:text.trim(),
-      ts:tsStr(),dateKey,createdTs:Date.now(),deleted:false
-    });
+    fbPush('notes',{author:user.name,authorColor,body:text.trim(),ts:tsStr(),dateKey:todayStr(),createdTs:Date.now(),deleted:false});
     setText('');
   }
 
-  function deleteNote(k,n){
-    fbUpdate(`notes/${k}`,{deleted:true,deletedBy:user.name,body:n.body});
-  }
+  function deleteNote(k){fbUpdate(`notes/${k}`,{deleted:true,deletedBy:user.name})}
 
-  // Split notes: last 7 days vs archive
   const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);
   const cutoffStr=cutoff.toISOString().split('T')[0];
 
-  const recent=[];
-  const archiveMap={};
+  const recent=[],archiveMap={};
   Object.entries(notes).forEach(([k,n])=>{
-    const d=n.dateKey||dateOnly(n.ts||'');
-    if(d>=cutoffStr){recent.push({k,...n});}
-    else{
-      if(!archiveMap[d])archiveMap[d]=[];
-      archiveMap[d].push({k,...n});
-    }
+    const d=n.dateKey||'';
+    if(d>=cutoffStr)recent.push({k,...n});
+    else{if(!archiveMap[d])archiveMap[d]=[];archiveMap[d].push({k,...n});}
   });
   recent.sort((a,b)=>b.createdTs-a.createdTs);
 
-  // Calendar helpers
   const daysInMonth=(y,m)=>new Date(y,m+1,0).getDate();
   const firstDay=(y,m)=>new Date(y,m,1).getDay();
   const monthName=(y,m)=>new Date(y,m,1).toLocaleString('default',{month:'long',year:'numeric'});
-
   function prevMonth(){setCalMonth(c=>{const d=new Date(c.y,c.m-1);return{y:d.getFullYear(),m:d.getMonth()}})}
   function nextMonth(){setCalMonth(c=>{const d=new Date(c.y,c.m+1);return{y:d.getFullYear(),m:d.getMonth()}})}
+  function dk(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
 
   const days=daysInMonth(calMonth.y,calMonth.m);
   const startDay=firstDay(calMonth.y,calMonth.m);
-  const dayLabels=['Su','Mo','Tu','We','Th','Fr','Sa'];
-
-  function dateKey(y,m,d){
-    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  }
-
   const selectedNotes=calDate?archiveMap[calDate]||[]:[];
+
+  function NoteCard({n,showDel}){
+    return(
+      <div className={`note-card${n.deleted?' deleted':''}`}>
+        <div className="note-header">
+          <div>
+            <span className="note-author" style={{color:n.deleted?'#6A7A66':n.authorColor}}>{n.deleted?'—':n.author}</span>
+            <div className="note-meta">{n.ts}</div>
+          </div>
+          {showDel&&!n.deleted&&<button className="note-del" onClick={()=>deleteNote(n.k)}>×</button>}
+        </div>
+        {n.deleted
+          ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
+          :<div className="note-body" style={{whiteSpace:'pre-wrap'}}>{n.body}</div>}
+      </div>
+    );
+  }
 
   return(
     <div className="content">
@@ -418,28 +514,8 @@ function NotesTab({user,notes}){
           style={{height:'80px',background:'#161A13',border:'1px solid #2A3A28',color:'#E8DFC8',borderRadius:'8px',padding:'12px',fontSize:'15px',fontFamily:'Inter,sans-serif',width:'100%',outline:'none',resize:'none'}}/>
         <button className="btn-primary" onClick={addNote}>Post Note</button>
       </div>
-
-      {/* Recent 7 days */}
       {recent.length===0&&<div className="empty">No shift notes in the last 7 days</div>}
-      {recent.map(n=>(
-        <div key={n.k} className={`note-card${n.deleted?' deleted':''}`}>
-          <div className="note-header">
-            <div>
-              <span className="note-author" style={{color:n.deleted?'#6A7A66':n.authorColor}}>
-                {n.deleted?'—':n.author}
-              </span>
-              <div className="note-meta">{n.ts}</div>
-            </div>
-            {!n.deleted&&<button className="note-del" onClick={()=>deleteNote(n.k,n)}>×</button>}
-          </div>
-          {n.deleted
-            ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
-            :<div className="note-body" style={{whiteSpace:'pre-wrap'}}>{n.body}</div>
-          }
-        </div>
-      ))}
-
-      {/* Archive calendar */}
+      {recent.map(n=><NoteCard key={n.k} n={n} showDel={true}/>)}
       {Object.keys(archiveMap).length>0&&(
         <>
           <div className="archive-hdr">📅 Archive</div>
@@ -449,42 +525,20 @@ function NotesTab({user,notes}){
             <button onClick={nextMonth}>›</button>
           </div>
           <div className="cal-grid">
-            {dayLabels.map(d=><div key={d} className="cal-day-label">{d}</div>)}
+            {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=><div key={d} className="cal-day-label">{d}</div>)}
             {Array(startDay).fill(null).map((_,i)=><div key={'e'+i}/>)}
             {Array(days).fill(null).map((_,i)=>{
-              const dk=dateKey(calMonth.y,calMonth.m,i+1);
-              const has=!!archiveMap[dk];
-              const sel=calDate===dk;
-              return(
-                <div key={i} className={`cal-day${has?' has-notes':''}`}
-                  style={sel?{background:'#C4A96B',color:'#1A1E16',borderColor:'#C4A96B'}:{}}
-                  onClick={()=>has&&setCalDate(sel?null:dk)}>
-                  {i+1}
-                </div>
-              );
+              const d=dk(calMonth.y,calMonth.m,i+1);
+              const has=!!archiveMap[d];const sel=calDate===d;
+              return<div key={i} className={`cal-day${has?' has-notes':''}`}
+                style={sel?{background:'#C4A96B',color:'#1A1E16',borderColor:'#C4A96B'}:{}}
+                onClick={()=>has&&setCalDate(sel?null:d)}>{i+1}</div>;
             })}
           </div>
-          {calDate&&(
-            <>
-              <div className="archive-notes-hdr">Notes for {fmtDate(calDate)}</div>
-              {selectedNotes.sort((a,b)=>b.createdTs-a.createdTs).map(n=>(
-                <div key={n.k} className={`note-card${n.deleted?' deleted':''}`}>
-                  <div className="note-header">
-                    <div>
-                      <span className="note-author" style={{color:n.deleted?'#6A7A66':n.authorColor}}>
-                        {n.deleted?'—':n.author}
-                      </span>
-                      <div className="note-meta">{n.ts}</div>
-                    </div>
-                  </div>
-                  {n.deleted
-                    ?<div style={{fontSize:'14px',color:'#4A5A46',fontStyle:'italic'}}>Note deleted by {n.deletedBy}</div>
-                    :<div className="note-body" style={{whiteSpace:'pre-wrap'}}>{n.body}</div>
-                  }
-                </div>
-              ))}
-            </>
-          )}
+          {calDate&&<>
+            <div className="archive-notes-hdr">Notes for {fmtDate(calDate)}</div>
+            {selectedNotes.sort((a,b)=>b.createdTs-a.createdTs).map(n=><NoteCard key={n.k} n={n} showDel={false}/>)}
+          </>}
         </>
       )}
     </div>
@@ -496,6 +550,9 @@ function App(){
   const [fbReady,setFbReady]=useState(!!window._fbReady);
   const [user,setUser]=useState(null);
   const [pinFor,setPinFor]=useState(null);
+  const [showBioSetup,setShowBioSetup]=useState(false);
+  const [showBioLogin,setShowBioLogin]=useState(false);
+  const [savedRole,setSavedRole]=useState(null);
   const [tab,setTab]=useState('tasks');
   const [tasks,setTasks]=useState({});
   const [notes,setNotes]=useState({});
@@ -512,8 +569,45 @@ function App(){
     return()=>{ut();un()};
   },[fbReady]);
 
+  // Check for saved biometric role on load
+  useEffect(()=>{
+    const rk=getBioRole();
+    if(rk&&STAFF[rk]&&bioAvailable()){setSavedRole(rk);setShowBioLogin(true);}
+  },[]);
+
+  function handlePinSuccess(staffObj,roleKey){
+    // After PIN success, offer biometric setup if available and not yet set up
+    const alreadySetup=getBioRole()===roleKey;
+    if(bioAvailable()&&!alreadySetup){
+      setPinFor(null);
+      setShowBioSetup(true);
+      setSavedRole(roleKey);
+      setUser(staffObj);
+    } else {
+      setUser(staffObj);
+      setPinFor(null);
+    }
+  }
+
+  function handleExit(){
+    setUser(null);setPinFor(null);setShowBioSetup(false);setShowBioLogin(false);
+    // Don't clear bio role — just go back to role selection
+    setSavedRole(getBioRole());
+    if(getBioRole()&&bioAvailable()){setShowBioLogin(true);}
+  }
+
   if(!fbReady)return <div className="lgn"><div className="syncing">Connecting…</div></div>;
 
+  // Biometric login screen
+  if(showBioLogin&&savedRole&&!user){
+    return<BioLogin
+      roleKey={savedRole}
+      onSuccess={()=>{setUser(STAFF[savedRole]);setShowBioLogin(false)}}
+      onUsePIN={()=>{setShowBioLogin(false);setPinFor({id:savedRole,s:STAFF[savedRole]})}}
+      onBack={()=>{setShowBioLogin(false);setSavedRole(null);clearBioRole()}}/>;
+  }
+
+  // Role selection
   if(!user&&!pinFor)return(
     <div className="lgn">
       <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
@@ -533,27 +627,30 @@ function App(){
     </div>
   );
 
+  // PIN login
   if(pinFor&&!user)return(
     <PinLogin staff={pinFor.s}
-      onSuccess={()=>{setUser(pinFor.s);setPinFor(null)}}
+      onSuccess={()=>handlePinSuccess(pinFor.s,pinFor.id)}
       onBack={()=>setPinFor(null)}/>
   );
 
+  // Biometric setup prompt (shown once after first PIN login)
+  if(showBioSetup&&user)return(
+    <BioSetup roleKey={savedRole} onDone={()=>setShowBioSetup(false)}/>
+  );
+
+  const uk=userKey(user);const isOwner=uk==='owner';
   const visibleTasks=Object.values(tasks).filter(t=>{
-    const uk=userKey(user);
-    const isOwner=uk==='owner';
     if(isOwner)return true;
     if(t.assignee==='all')return true;
     if(t.createdBy===user.name)return true;
     return t.assignee===uk;
   });
-  const urgentCount=visibleTasks.filter(t=>t.status!=='completed'&&taskStatus(t)==='urgent').length;
-  const deadlineCount=visibleTasks.filter(t=>t.status!=='completed'&&taskStatus(t)==='deadline').length;
-  const activeOther=visibleTasks.filter(t=>t.status!=='completed'&&taskStatus(t)==='normal').length;
-
+  const urgentCount=visibleTasks.filter(t=>t.status!=='completed'&&taskPriority(t)==='urgent').length;
+  const deadlineCount=visibleTasks.filter(t=>t.status!=='completed'&&taskPriority(t)==='deadline').length;
+  const activeOther=visibleTasks.filter(t=>t.status!=='completed'&&taskPriority(t)==='normal').length;
   const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);
-  const cutoffStr=cutoff.toISOString().split('T')[0];
-  const recentNotes=Object.values(notes).filter(n=>(n.dateKey||'')>=cutoffStr&&!n.deleted).length;
+  const recentNotes=Object.values(notes).filter(n=>(n.dateKey||'')>=cutoff.toISOString().split('T')[0]&&!n.deleted).length;
 
   return(
     <div className="app">
@@ -561,7 +658,7 @@ function App(){
         <span className="ht">1887</span>
         <div className="hdr-right">
           <span className="role-badge" style={{color:user.color,borderColor:user.color+'44'}}>{user.icon} {user.name}</span>
-          <button className="exit-btn" onClick={()=>{setUser(null);setPinFor(null)}}>Exit</button>
+          <button className="exit-btn" onClick={handleExit}>Exit</button>
         </div>
       </div>
       <div className="tabs">
@@ -576,9 +673,7 @@ function App(){
           {recentNotes>0&&<span style={{background:'#8FAF8A',color:'#1A1E16',borderRadius:'10px',padding:'1px 7px',fontSize:'12px',marginLeft:'4px'}}>{recentNotes}</span>}
         </div>
       </div>
-      {tab==='tasks'
-        ?<TasksTab user={user} tasks={tasks}/>
-        :<NotesTab user={user} notes={notes}/>}
+      {tab==='tasks'?<TasksTab user={user} tasks={tasks}/>:<NotesTab user={user} notes={notes}/>}
     </div>
   );
 }
